@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-07 09:18:39.2012859 -0300 -03 m=+0.403099801
+----Creado----2020-07-08 18:41:45.2875339 -0300 -03 m=+1.202580801
 */
 include_once(app_path().'\core\crud.php');;
 
@@ -27,7 +27,9 @@ class Sec_roles_base extends Crud {
 		$this->$name = $value;
 	}
 
-	public function create($rol,$esAdminGlogal,$esAdminGrupo,$esAdminGeografico){
+	public function create(){
+
+
 		try {
 			$sql = 'insert into '.self::TABLE.' (rol,esAdminGlogal,esAdminGrupo,esAdminGeografico) values(?,?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
@@ -41,7 +43,7 @@ class Sec_roles_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function update($id,$rol,$esAdminGlogal,$esAdminGrupo,$esAdminGeografico){
+	public function update(){
 		try {
 			$sql = 'update '.self::TABLE.' set  rol = ? , esAdminGlogal = ? , esAdminGrupo = ? , esAdminGeografico = ? where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -55,7 +57,7 @@ class Sec_roles_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function getByPrim( $id){
+	public function getByPrim(){
 		try {
 			$sql = 'select * from '.self::TABLE.' where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -69,7 +71,7 @@ class Sec_roles_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function delByPrim( $id){
+	public function delByPrim(){
 		try {
 			$sql = 'delete from '.self::TABLE.' where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);

@@ -20,47 +20,49 @@ var db *sql.DB
 
 //Columna Estructura para almacenar lod datos de una columna de una tabla
 type Columna struct {
-	columna string
-	tipo string
-	extra string
+	columna   string
+	tipo      string
+	extra     string
 	columnkey string
 }
 
 //Tabla Estructura para almacenar los datos de una tabla
 type Tabla struct {
-	nombre string
+	nombre   string
 	columnas []Columna
 }
 
 //Str_DIV Ascii para el símbolo de división
 const Str_DIV = 47
-// Str_DOUBLE Ascii para las comillas dobles
-const Str_DOUBLE =  34
-// Str_SIMPLE Ascii para comillas simples
-const Str_SIMPLE =  39
-// Str_BACK Ascii para backslash
-const Str_BACK =  92
 
+// Str_DOUBLE Ascii para las comillas dobles
+const Str_DOUBLE = 34
+
+// Str_SIMPLE Ascii para comillas simples
+const Str_SIMPLE = 39
+
+// Str_BACK Ascii para backslash
+const Str_BACK = 92
 
 func main() {
-    var err error
+	var err error
 
 	/* Nos conectamos a la BBDD */
 	// "mysql", "username:password@tcp(127.0.0.1:3306)/test"
-    db, err = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/information_schema?charset=utf8")
+	db, err = sql.Open("mysql", "root:@tcp(127.0.0.1:3306)/information_schema?charset=utf8")
 	check(err)
 	defer db.Close()
 
-	stmt := "SELECT  c.TABLE_NAME, c.column_name , c.data_type , c.extra, c.column_key "+
-	"FROM TABLES T INNER JOIN columns C on (t.table_name = c.table_name) " +
-	"WHERE t.table_type = 'BASE TABLE' AND t.table_schema='participemos' "+
-	"ORDER BY c.table_name, c.ordinal_position "
+	stmt := "SELECT  c.TABLE_NAME, c.column_name , c.data_type , c.extra, c.column_key " +
+		"FROM TABLES T INNER JOIN columns C on (t.table_name = c.table_name) " +
+		"WHERE t.table_type = 'BASE TABLE' AND t.table_schema='participemos' " +
+		"ORDER BY c.table_name, c.ordinal_position "
 
 	rows, err := db.Query(stmt)
 	check(err)
 
 	/* Bucle para recorrer todos los registros */
-	tablaanterior :=""
+	tablaanterior := ""
 
 	// MiTabla := Tabla{
 	// 	nombre: "prueba",
@@ -80,8 +82,8 @@ func main() {
 
 	dirModel := "model"
 	dirController := "controller"
-    dirAPI := "api"
-    dirRoutes := "routes"
+	dirAPI := "api"
+	dirRoutes := "routes"
 
 	//Borro los archivos del directorio modelos
 	RemoveContents(dirModel)
@@ -92,30 +94,29 @@ func main() {
 	// borro los archivos del directorio routes
 	RemoveContents(dirRoutes)
 
-
 	// recorro las columnas y voy armando al estructura de tablas
-    for rows.Next() {
+	for rows.Next() {
 		var tabla, columna, datatype, extra, columnkey string
 
 		/* Leemos el registro */
 		rows.Scan(&tabla, &columna, &datatype, &extra, &columnkey)
-		if(tabla!=tablaanterior){
+		if tabla != tablaanterior {
 			//Estoy disticnta tabla.
 
 			//Voy a crear el archivo con estos datos
-			if(tablaanterior!=""){
+			if tablaanterior != "" {
 
-				if(MiTabla.crearModelo(dirModel)){
+				if MiTabla.crearModelo(dirModel) {
 					fmt.Println("Modelo Creado exitosamente")
-					if(MiTabla.crearControlador(dirController)){
+					if MiTabla.crearControlador(dirController) {
 						fmt.Println("Controlador creado exitosamente")
-						if(MiTabla.crearAPI(dirAPI, dirController)){
-                            fmt.Println("Api generada exitosamente")
-                            if(MiTabla.crearRutas(dirRoutes, dirController)){
-                                fmt.Println("Ruta generada exitosamente")
-                            } else {
-                                fmt.Println("Error en la creación de las Rutas")
-                            }
+						if MiTabla.crearAPI(dirAPI, dirController) {
+							fmt.Println("Api generada exitosamente")
+							if MiTabla.crearRutas(dirRoutes, dirController) {
+								fmt.Println("Ruta generada exitosamente")
+							} else {
+								fmt.Println("Error en la creación de las Rutas")
+							}
 						} else {
 							fmt.Println("Error en la creación de las API")
 						}
@@ -128,95 +129,139 @@ func main() {
 			}
 			// voy a inicializar el objeto
 			fmt.Println("Cargando: " + tabla + " ...")
-			MiTabla.nombre=tabla
+			MiTabla.nombre = tabla
 			MiTabla.columnas = []Columna{}
 			tablaanterior = tabla
 		}
 		// le agrego las columnas
 		MiTabla.columnas = append(MiTabla.columnas, Columna{
-			columna: columna,
-			tipo: datatype,
-			extra: extra,
+			columna:   columna,
+			tipo:      datatype,
+			extra:     extra,
 			columnkey: columnkey,
 		})
 
-        /* Escribimos el título por pantalla */
-        // fmt.Printf( "Tabla %v, Columna: %v , tipo: %v \n ", tabla, columna, datatype )
-    }
+		/* Escribimos el título por pantalla */
+		// fmt.Printf( "Tabla %v, Columna: %v , tipo: %v \n ", tabla, columna, datatype )
+	}
 }
 
-
-
-func (t* Tabla) crearRutas(dirRoute string, dirController string) bool {
+func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	rdo := true
 	var content strings.Builder
 
-	fileName := "./"+dirRoute+"/api_" + t.nombre + "_base.php"
-	fmt.Println("creando "+ t.nombre, t.columnas)
-
-
+	fileName := "./" + dirRoute + "/api_" + t.nombre + "_base.php"
+	fmt.Println("creando "+t.nombre, t.columnas)
 
 	content.WriteString("<?php\n\n")
 	content.WriteString("/*\n")
-	content.WriteString("----Creado----" + time.Now().String()+"\n")
+	content.WriteString("----Creado----" + time.Now().String() + "\n")
 	content.WriteString("*/\n")
 
+	content.WriteString("use Illuminate\\Http\\Request;\n")
+	content.WriteString("use Illuminate\\Support\\Facades\\Route;\n\n")
 
-    content.WriteString("use Illuminate\\Http\\Request;\n")
-    content.WriteString("use Illuminate\\Support\\Facades\\Route;\n\n")
+	content.WriteString("include_once(app_path().'\\" + dirController + "\\" + t.nombre + "Controller.php');\n\n")
 
-    content.WriteString("include_once(app_path().'\\" + dirController+ "\\" + t.nombre + "_controller.php');\n\n")
+	// GET
 
-    content.WriteString("Route::get('" + t.nombre + "', function () {\n")
-    content.WriteString("$json = '';\n")
-    content.WriteString("try {\n")
-    content.WriteString("\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
-    content.WriteString("\treturn response($" + t.nombre + "->getAll(),200);\n")
+	content.WriteString("Route::get('" + t.nombre + "', function () {\n")
+	content.WriteString("\t$json = '';\n")
+	content.WriteString("\ttry {\n")
+	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+	content.WriteString("\t\treturn response($" + t.nombre + "->getAll(),200);\n")
 
+	content.WriteString("\t} catch (Exception $ex){\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\thttp_response_code(500);\n")
+	content.WriteString("\t} finally {\n")
+	content.WriteString("\t\techo $json;\n")
+	content.WriteString("\t}\n")
+	content.WriteString("});\n\n\n")
 
+	// POST
 
-	content.WriteString("} catch (Error $err){\n")
-	content.WriteString("\t$json = json_encode([" + strconv.Quote("ok")+ "=>false," + strconv.Quote("payload")+ "=>utf8_encode($err->getMessage())]);;\n")
-	content.WriteString("\thttp_response_code(500);\n")
-	content.WriteString("} catch (Exception $ex){\n")
-	content.WriteString("\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
-	content.WriteString("\thttp_response_code(500);\n")
-	content.WriteString("} finally {\n")
-	content.WriteString("\techo $json;\n")
-	content.WriteString("}\n")
+	content.WriteString("Route::post('" + t.nombre + "', function (Request $request) {\n")
+	content.WriteString("\t$json = '';\n")
+	content.WriteString("\ttry {\n")
+	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+	content.WriteString("\t\t$res = $" + t.nombre + "->create(")
+	c := ""
+	for _, col := range t.columnas {
+		if c != "" {
+			c += ","
+		}
+		c += "$request->" + col.columna
+	}
+	content.WriteString(c)
+	content.WriteString(");")
+	content.WriteString("\n\t\treturn response($res,200);\n")
+
+	content.WriteString("\t} catch (Exception $ex){\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\thttp_response_code(500);\n")
+	content.WriteString("\t} finally {\n")
+	content.WriteString("\t\techo $json;\n")
+	content.WriteString("\t}\n")
 	content.WriteString("});\n")
+
+	// PUT
+
+	content.WriteString("Route::put('" + t.nombre + "', function (Request $request) {\n")
+	content.WriteString("\t$json = '';\n")
+	content.WriteString("\ttry {\n")
+
+	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+	content.WriteString("\t\t$res = $" + t.nombre + "->update(")
+	c = ""
+	for _, col := range t.columnas {
+		if c != "" {
+			c += ","
+		}
+		c += "$request->" + col.columna
+
+	}
+	content.WriteString(c)
+	content.WriteString(");")
+	content.WriteString("\n\t\treturn response($res,200);\n")
+
+	content.WriteString("\t} catch (Exception $ex){\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\thttp_response_code(500);\n")
+	content.WriteString("\t} finally {\n")
+	content.WriteString("\t\techo $json;\n")
+	content.WriteString("\t}\n")
+	content.WriteString("});\n")
+
 	content.WriteString("?>")
 
 	b := []byte(content.String())
-	err := ioutil.WriteFile(fileName, b ,0666)
+	err := ioutil.WriteFile(fileName, b, 0666)
 	check(err)
 
 	return rdo
 }
 
-
-func (t* Tabla) crearAPI(dirAPI string, dirController string) bool {
+func (t *Tabla) crearAPI(dirAPI string, dirController string) bool {
 	rdo := true
 	var content strings.Builder
 
-	fileName := "./"+dirAPI+"/" + t.nombre + "Api_base.php"
-	fmt.Println("creando "+ t.nombre, t.columnas)
-
-
+	fileName := "./" + dirAPI + "/" + t.nombre + "Api_base.php"
+	fmt.Println("creando "+t.nombre, t.columnas)
 
 	content.WriteString("<?php\n\n")
 	content.WriteString("/*\n")
-	content.WriteString("----Creado----" + time.Now().String()+"\n")
+	content.WriteString("----Creado----" + time.Now().String() + "\n")
 	content.WriteString("*/\n")
 
 	content.WriteString("require_once '../core/error_core.php';\n")
 	content.WriteString("require_once '../core/security.php';\n")
 	content.WriteString("require_once '../core/jwt_core.php';\n")
 	content.WriteString("require_once '../core/headers.php';\n")
-	content.WriteString("require_once '../"+dirController+"/" + t.nombre + "Controller.php';\n\n")
+	content.WriteString("require_once '../" + dirController + "/" + t.nombre + "Controller.php';\n\n")
 
 	content.WriteString("try {\n")
-	content.WriteString("\t$json = '{"+ strconv.Quote("rdo") + ":" + strconv.Quote("") + "}';\n")
+	content.WriteString("\t$json = '{" + strconv.Quote("rdo") + ":" + strconv.Quote("") + "}';\n")
 	content.WriteString("\t$data = file_get_contents('php://input');\n")
 	content.WriteString("\t$input = json_decode($data);\n")
 	content.WriteString("\t$accion = $input->accion;\n")
@@ -225,48 +270,47 @@ func (t* Tabla) crearAPI(dirAPI string, dirController string) bool {
 	content.WriteString("\tswitch ($accion) {\n")
 	content.WriteString("\t\tcase " + strconv.Quote("GETALL") + ":\n")
 	content.WriteString("\t\t\t$result = $miController->getAll();\n")
-	content.WriteString("\t\t\t$json = json_encode([" + strconv.Quote("ok") + "=>true,"  + strconv.Quote("payload") + "=> $result]);\n")
+	content.WriteString("\t\t\t$json = json_encode([" + strconv.Quote("ok") + "=>true," + strconv.Quote("payload") + "=> $result]);\n")
 	content.WriteString("\t\t\tbreak;\n")
 
 	content.WriteString("\t\tcase " + strconv.Quote("GETID") + ":\n")
 	content.WriteString("\t\t\t$result = $miController->getByPrim(")
-	c:=""
+	c := ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=","
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
 			}
-			c+=" $input->" + col.columna
+			c += " $input->" + col.columna
 		}
 	}
 	content.WriteString(c)
 	content.WriteString(");\n")
-	content.WriteString("\t\t\t$json = json_encode([" + strconv.Quote("ok") + "=>true,"  + strconv.Quote("payload") + "=> $result]);\n")
+	content.WriteString("\t\t\t$json = json_encode([" + strconv.Quote("ok") + "=>true," + strconv.Quote("payload") + "=> $result]);\n")
 	content.WriteString("\t\t\tbreak;\n")
 
 	content.WriteString("\t\tcase " + strconv.Quote("DEL") + ":\n")
 	content.WriteString("\t\t\t$result = $miController->delByPrim(")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=","
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
 			}
-			c+=" $input->" + col.columna
+			c += " $input->" + col.columna
 		}
 	}
 	content.WriteString(c)
 	content.WriteString(");\n")
-	content.WriteString("\t\t\t$json = json_encode([" + strconv.Quote("ok") + "=>true,"  +strconv.Quote("payload") + "=> $result]);\n")
+	content.WriteString("\t\t\t$json = json_encode([" + strconv.Quote("ok") + "=>true," + strconv.Quote("payload") + "=> $result]);\n")
 	content.WriteString("\t\t\tbreak;\n")
 
 	content.WriteString("\t}\n")
 
-    content.WriteString("\thttp_response_code(200);\n")
-
+	content.WriteString("\thttp_response_code(200);\n")
 
 	content.WriteString("} catch (Error $err){\n")
-	content.WriteString("\t$json = json_encode([" + strconv.Quote("ok")+ "=>false," + strconv.Quote("payload")+ "=>utf8_encode($err->getMessage())]);;\n")
+	content.WriteString("\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($err->getMessage())]);;\n")
 	content.WriteString("\thttp_response_code(500);\n")
 	content.WriteString("} catch (Exception $ex){\n")
 	content.WriteString("\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
@@ -277,29 +321,26 @@ func (t* Tabla) crearAPI(dirAPI string, dirController string) bool {
 	content.WriteString("?>")
 
 	b := []byte(content.String())
-	err := ioutil.WriteFile(fileName, b ,0666)
+	err := ioutil.WriteFile(fileName, b, 0666)
 	check(err)
 
 	return rdo
 }
 
-
-func (t* Tabla) crearControlador(dirController string) bool {
+func (t *Tabla) crearControlador(dirController string) bool {
 	rdo := true
-    var content strings.Builder
+	var content strings.Builder
 
-
-
-	fileName := "./"+dirController+"/" + t.nombre + "Controlador_base.php"
-	fmt.Println("creando "+ t.nombre, t.columnas)
+	fileName := "./" + dirController + "/" + t.nombre + "Controlador_base.php"
+	fmt.Println("creando "+t.nombre, t.columnas)
 
 	content.WriteString("<?php\n\n")
 	content.WriteString("/*\n")
-	content.WriteString("----Creado----" + time.Now().String()+"\n")
+	content.WriteString("----Creado----" + time.Now().String() + "\n")
 	content.WriteString("*/\n")
 
-    content.WriteString("include_once(app_path()." + "'\\model\\" +
-    t.nombre + ".php');\n\n")
+	content.WriteString("include_once(app_path()." + "'\\model\\" +
+		t.nombre + ".php');\n\n")
 	content.WriteString("class " + strings.Title(t.nombre) + "Controller_base {\n\n")
 	content.WriteString("\tprivate $model; \n")
 
@@ -307,95 +348,138 @@ func (t* Tabla) crearControlador(dirController string) bool {
 	content.WriteString("\t\t$this->model = new " + strings.Title(t.nombre) + "();\n")
 	content.WriteString("\t}\n")
 
-
 	content.WriteString("\n\tpublic function getAll(){\n")
 	content.WriteString("\t\treturn $this->model->getAll();\n")
 	content.WriteString("\t}\n")
 
 	content.WriteString("\n\tpublic function getByPrim(")
-	c:=""
+	c := ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=","
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
 			}
-			c+=" $" + col.columna
+			c += " $" + col.columna
 		}
 	}
 	content.WriteString(c)
 	content.WriteString("){\n")
-	content.WriteString("\t\treturn $this->model->getByPrim(")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=","
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
 			}
-			c+=" $" + col.columna
+			c += "\n\t\t$this->model->" + col.columna + "= $" + col.columna + ";"
 		}
 	}
 	content.WriteString(c)
-	content.WriteString(");\n")
+
+	content.WriteString("\n\t\treturn $this->model->getByPrim();\n")
 	content.WriteString("\t}\n")
 
 	content.WriteString("\n\tpublic function delByPrim(")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=","
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
 			}
-			c+=" $" + col.columna
+			c += " $" + col.columna
 		}
 	}
 	content.WriteString(c)
 	content.WriteString("){\n")
-	content.WriteString("\t\treturn $this->model->delByPrim(")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=","
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
 			}
-			c+=" $" + col.columna
+			c += "\n\t\t$this->model->" + col.columna + "= $" + col.columna + ";"
 		}
 	}
 	content.WriteString(c)
-	content.WriteString(");\n")
+
+	content.WriteString("\n\t\treturn $this->model->delByPrim();\n")
+	content.WriteString("\t}\n\n")
+
+	content.WriteString("\n\tpublic function create(")
+
+	c = ""
+	for _, col := range t.columnas {
+		if col.extra != "auto_increment" {
+			if c != "" {
+				c += ","
+			}
+			c += "$" + col.columna
+		}
+	}
+	content.WriteString(c)
+
+	content.WriteString("){\n")
+
+	c = "\n"
+	for _, col := range t.columnas {
+		if col.extra != "auto_increment" {
+			c += "\n\t\t$this->model->" + col.columna + "=$" + col.columna + ";"
+		}
+	}
+	content.WriteString(c)
+
+	content.WriteString("\n\n\t\treturn $this->model->create();\n")
+	content.WriteString("\t}\n\n")
+
+	content.WriteString("\n\tpublic function update(")
+
+	c = ""
+	for i, col := range t.columnas {
+		if i != 0 {
+			c += ","
+		}
+		c += "$" + col.columna
+	}
+	content.WriteString(c)
+
+	content.WriteString("){\n")
+
+	c = ""
+	for _, col := range t.columnas {
+		c += "\n\t\t$this->model->" + col.columna + "=$" + col.columna + ";"
+	}
+	content.WriteString(c)
+
+	content.WriteString("\n\n\t\treturn $this->model->update();\n")
 	content.WriteString("\t}\n")
-	content.WriteString("}\n")
+	content.WriteString("}\n\n")
+
 	content.WriteString("?>")
 
 	b := []byte(content.String())
-	err := ioutil.WriteFile(fileName, b ,0666)
+	err := ioutil.WriteFile(fileName, b, 0666)
 	check(err)
 
 	return rdo
 }
 
-
-func (t* Tabla) crearModelo(dirModel string) bool {
+func (t *Tabla) crearModelo(dirModel string) bool {
 	rdo := true
 	var content strings.Builder
 
-
-	fileName := "./"+dirModel+"/" + t.nombre + "_base.php"
-	fmt.Println("creando "+ t.nombre, t.columnas)
-
-
-
+	fileName := "./" + dirModel + "/" + t.nombre + "_base.php"
+	fmt.Println("creando "+t.nombre, t.columnas)
 
 	content.WriteString("<?php\n\n")
 	content.WriteString("/*\n")
-	content.WriteString("----Creado----" + time.Now().String()+"\n")
+	content.WriteString("----Creado----" + time.Now().String() + "\n")
 	content.WriteString("*/\n")
 
-    content.WriteString("include_once(app_path().'\\core\\crud.php');;\n\n")
+	content.WriteString("include_once(app_path().'\\core\\crud.php');;\n\n")
 
 	content.WriteString("class " + strings.Title(t.nombre) + "_base extends Crud {\n\n")
 	for _, col := range t.columnas {
-        content.WriteString("\tprivate $" + col.columna + ";\n")
-    }
+		content.WriteString("\tprivate $" + col.columna + ";\n")
+	}
 
 	content.WriteString("\n\tconst TABLE = '" + t.nombre + "';\n")
 
@@ -414,38 +498,28 @@ func (t* Tabla) crearModelo(dirModel string) bool {
 	//
 	// Create
 	//
-	content.WriteString("\n\tpublic function create(")
-	c:=""
-	for _, col := range t.columnas {
-		if(col.extra != "auto_increment"){
-			if(c!=""){
-				c+=","
-			}
-			c+="$" + col.columna
-		}
-	}
-	content.WriteString(c)
-	content.WriteString("){\n")
-	content.WriteString("\t\ttry {\n")
+	content.WriteString("\n\tpublic function create(){\n")
+
+	content.WriteString("\n\n\t\ttry {\n")
 	content.WriteString("\t\t\t$sql = 'insert into '.self::TABLE.' (")
-	c=""
+	c := ""
 	for _, col := range t.columnas {
-		if(col.extra != "auto_increment"){
-			if(c!=""){
-				c+=","
+		if col.extra != "auto_increment" {
+			if c != "" {
+				c += ","
 			}
-			c+=col.columna
+			c += col.columna
 		}
 	}
 	content.WriteString(c)
 	content.WriteString(") values(")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.extra != "auto_increment"){
-			if(c!=""){
-				c+=","
+		if col.extra != "auto_increment" {
+			if c != "" {
+				c += ","
 			}
-			c+="?"
+			c += "?"
 		}
 	}
 	content.WriteString(c)
@@ -453,13 +527,13 @@ func (t* Tabla) crearModelo(dirModel string) bool {
 
 	content.WriteString("\t\t\t$stmt = $this->pdo->prepare($sql);\n")
 	content.WriteString("\t\t\t$result = $stmt->execute(array(")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.extra != "auto_increment"){
-			if(c!=""){
-				c+=","
+		if col.extra != "auto_increment" {
+			if c != "" {
+				c += ","
 			}
-			c+="$this->" + col.columna
+			c += "$this->" + col.columna
 		}
 	}
 	content.WriteString(c)
@@ -477,58 +551,48 @@ func (t* Tabla) crearModelo(dirModel string) bool {
 	//
 	// update
 	//
-	content.WriteString("\tpublic function update(")
-	c=""
-	for i, col := range t.columnas {
-		if(i!= 0){
-				c+=","
-		}
-		c+="$" + col.columna
-	}
-	content.WriteString(c)
-
-	content.WriteString("){\n")
+	content.WriteString("\tpublic function update(){\n")
 	content.WriteString("\t\ttry {\n")
 	content.WriteString("\t\t\t$sql = 'update '.self::TABLE.' set ")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey != "PRI"){
-			if(c!=""){
-				c+=","
+		if col.columnkey != "PRI" {
+			if c != "" {
+				c += ","
 			}
-			c+=" " + col.columna + " = ? "
+			c += " " + col.columna + " = ? "
 		}
 	}
 	content.WriteString(c)
 	content.WriteString("where ")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=" and "
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += " and "
 			}
-			c+=" " + col.columna + " = ? "
+			c += " " + col.columna + " = ? "
 		}
 	}
 	content.WriteString(c + "';\n")
 
 	content.WriteString("\t\t\t$stmt = $this->pdo->prepare($sql);\n")
 	content.WriteString("\t\t\t$result = $stmt->execute(array(")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey != "PRI"){
-			if(c!=""){
-				c+=","
+		if col.columnkey != "PRI" {
+			if c != "" {
+				c += ","
 			}
-			c+=" $this->" + col.columna + " "
+			c += " $this->" + col.columna + " "
 		}
 	}
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=","
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
 			}
-			c+=" $this->" + col.columna + " "
+			c += " $this->" + col.columna + " "
 		}
 	}
 	content.WriteString(c)
@@ -544,46 +608,34 @@ func (t* Tabla) crearModelo(dirModel string) bool {
 	content.WriteString("\t\t}\n")
 	content.WriteString("\t}\n")
 
-
 	//
 	// getByPrim
 	//
-	content.WriteString("\tpublic function getByPrim(")
-	c=""
-	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=" , "
-			}
-			c+=" $" + col.columna
-		}
-	}
-	content.WriteString(c )
-	content.WriteString("){\n")
+	content.WriteString("\tpublic function getByPrim(){\n")
 	content.WriteString("\t\ttry {\n")
 	content.WriteString("\t\t\t$sql = 'select * from '.self::TABLE.' where ")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=" and "
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += " and "
 			}
-			c+=" " + col.columna + " = ? "
+			c += " " + col.columna + " = ? "
 		}
 	}
 	content.WriteString(c + "';\n")
 	content.WriteString("\t\t\t$stmt = $this->pdo->prepare($sql);\n")
 	content.WriteString("\t\t\t$result = $stmt->execute(array(")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=" , "
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += " , "
 			}
-			c+=" $this->" + col.columna
+			c += " $this->" + col.columna
 		}
 	}
-	content.WriteString(c )
+	content.WriteString(c)
 	content.WriteString("));\n")
 	content.WriteString("\t\t\treturn $result;\n")
 	content.WriteString("\t\t} catch (PDOException $err){\n")
@@ -598,42 +650,31 @@ func (t* Tabla) crearModelo(dirModel string) bool {
 	//
 	// delByPrim
 	//
-	content.WriteString("\tpublic function delByPrim(")
-	c=""
-	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=" , "
-			}
-			c+=" $" + col.columna
-		}
-	}
-	content.WriteString(c )
-	content.WriteString("){\n")
+	content.WriteString("\tpublic function delByPrim(){\n")
 	content.WriteString("\t\ttry {\n")
 	content.WriteString("\t\t\t$sql = 'delete from '.self::TABLE.' where ")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=" and "
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += " and "
 			}
-			c+=" " + col.columna + " = ? "
+			c += " " + col.columna + " = ? "
 		}
 	}
 	content.WriteString(c + "';\n")
 	content.WriteString("\t\t\t$stmt = $this->pdo->prepare($sql);\n")
 	content.WriteString("\t\t\t$result = $stmt->execute(array(")
-	c=""
+	c = ""
 	for _, col := range t.columnas {
-		if(col.columnkey == "PRI"){
-			if(c!=""){
-				c+=" , "
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += " , "
 			}
-			c+=" $this->" + col.columna
+			c += " $this->" + col.columna
 		}
 	}
-	content.WriteString(c )
+	content.WriteString(c)
 	content.WriteString("));\n")
 	content.WriteString("\t\t\treturn $result;\n")
 	content.WriteString("\t\t} catch (PDOException $err){\n")
@@ -645,13 +686,10 @@ func (t* Tabla) crearModelo(dirModel string) bool {
 	content.WriteString("\t\t}\n")
 	content.WriteString("\t}\n")
 
-
 	content.WriteString("}\n")
 	content.WriteString("?>")
 
-
-
-    // dir := "modelos"
+	// dir := "modelos"
 	// err:=os.Mkdir(dir, 0777)
 	// check(err)
 
@@ -659,36 +697,34 @@ func (t* Tabla) crearModelo(dirModel string) bool {
 
 	//f, err := os.Create(t.nombre)
 	b := []byte(content.String())
-	err := ioutil.WriteFile(fileName, b ,0666)
+	err := ioutil.WriteFile(fileName, b, 0666)
 	check(err)
 
 	return rdo
 }
 
-
 // RemoveContents borra el contenido de un directorio
 func RemoveContents(dir string) error {
-    d, err := os.Open(dir)
+	d, err := os.Open(dir)
 	check(err)
 
-    defer d.Close()
-    names, err := d.Readdirnames(-1)
+	defer d.Close()
+	names, err := d.Readdirnames(-1)
 	check(err)
 
-    for _, name := range names {
+	for _, name := range names {
 
-		if(strings.HasSuffix(name, "_base.php")){
+		if strings.HasSuffix(name, "_base.php") {
 			err = os.RemoveAll(path.Join(dir, name))
 			check(err)
 		}
-    }
-    return nil
+	}
+	return nil
 }
 
 func check(e error) {
-    if e != nil {
+	if e != nil {
 		log.Fatal(e)
-        panic(e)
-    }
+		panic(e)
+	}
 }
-

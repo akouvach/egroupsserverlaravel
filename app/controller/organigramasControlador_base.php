@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-07 09:18:39.1833317 -0300 -03 m=+0.385145701
+----Creado----2020-07-08 18:41:45.1937077 -0300 -03 m=+1.108754601
 */
 include_once(app_path().'\model\organigramas.php');
 
@@ -18,11 +18,36 @@ class OrganigramasController_base {
 	}
 
 	public function getByPrim( $id){
-		return $this->model->getByPrim( $id);
+
+		$this->model->id= $id;
+		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $id){
-		return $this->model->delByPrim( $id);
+
+		$this->model->id= $id;
+		return $this->model->delByPrim();
+	}
+
+
+	public function create($area,$idAreaPadre){
+
+
+		$this->model->area=$area;
+		$this->model->idAreaPadre=$idAreaPadre;
+
+		return $this->model->create();
+	}
+
+
+	public function update($id,$area,$idAreaPadre){
+
+		$this->model->id=$id;
+		$this->model->area=$area;
+		$this->model->idAreaPadre=$idAreaPadre;
+
+		return $this->model->update();
 	}
 }
+
 ?>

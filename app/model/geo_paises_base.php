@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-07 09:18:39.0327318 -0300 -03 m=+0.234546201
+----Creado----2020-07-08 18:41:44.5091625 -0300 -03 m=+0.424209401
 */
 include_once(app_path().'\core\crud.php');;
 
@@ -27,7 +27,9 @@ class Geo_paises_base extends Crud {
 		$this->$name = $value;
 	}
 
-	public function create($id,$nombre,$descripcion,$iso3,$codigo){
+	public function create(){
+
+
 		try {
 			$sql = 'insert into '.self::TABLE.' (id,nombre,descripcion,iso3,codigo) values(?,?,?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
@@ -41,7 +43,7 @@ class Geo_paises_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function update($id,$nombre,$descripcion,$iso3,$codigo){
+	public function update(){
 		try {
 			$sql = 'update '.self::TABLE.' set  nombre = ? , descripcion = ? , iso3 = ? , codigo = ? where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -55,7 +57,7 @@ class Geo_paises_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function getByPrim( $id){
+	public function getByPrim(){
 		try {
 			$sql = 'select * from '.self::TABLE.' where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -69,7 +71,7 @@ class Geo_paises_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function delByPrim( $id){
+	public function delByPrim(){
 		try {
 			$sql = 'delete from '.self::TABLE.' where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);

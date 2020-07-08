@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-07 09:18:39.165391 -0300 -03 m=+0.367205001
+----Creado----2020-07-08 18:41:45.06841 -0300 -03 m=+0.983456901
 */
 include_once(app_path().'\model\menu.php');
 
@@ -18,11 +18,38 @@ class MenuController_base {
 	}
 
 	public function getByPrim( $id){
-		return $this->model->getByPrim( $id);
+
+		$this->model->id= $id;
+		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $id){
-		return $this->model->delByPrim( $id);
+
+		$this->model->id= $id;
+		return $this->model->delByPrim();
+	}
+
+
+	public function create($ruta,$menu,$menuIdPadre){
+
+
+		$this->model->ruta=$ruta;
+		$this->model->menu=$menu;
+		$this->model->menuIdPadre=$menuIdPadre;
+
+		return $this->model->create();
+	}
+
+
+	public function update($id,$ruta,$menu,$menuIdPadre){
+
+		$this->model->id=$id;
+		$this->model->ruta=$ruta;
+		$this->model->menu=$menu;
+		$this->model->menuIdPadre=$menuIdPadre;
+
+		return $this->model->update();
 	}
 }
+
 ?>

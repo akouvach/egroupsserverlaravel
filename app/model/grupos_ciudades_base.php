@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-07 09:18:39.0855908 -0300 -03 m=+0.287405101
+----Creado----2020-07-08 18:41:44.7606938 -0300 -03 m=+0.675740701
 */
 include_once(app_path().'\core\crud.php');;
 
@@ -25,7 +25,9 @@ class Grupos_ciudades_base extends Crud {
 		$this->$name = $value;
 	}
 
-	public function create($idCiudad,$idGrupo,$fechaDesde){
+	public function create(){
+
+
 		try {
 			$sql = 'insert into '.self::TABLE.' (idCiudad,idGrupo,fechaDesde) values(?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
@@ -39,7 +41,7 @@ class Grupos_ciudades_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function update($idCiudad,$idGrupo,$fechaDesde){
+	public function update(){
 		try {
 			$sql = 'update '.self::TABLE.' set where  idCiudad = ?  and  idGrupo = ?  and  fechaDesde = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -53,7 +55,7 @@ class Grupos_ciudades_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function getByPrim( $idCiudad ,  $idGrupo ,  $fechaDesde){
+	public function getByPrim(){
 		try {
 			$sql = 'select * from '.self::TABLE.' where  idCiudad = ?  and  idGrupo = ?  and  fechaDesde = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -67,7 +69,7 @@ class Grupos_ciudades_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function delByPrim( $idCiudad ,  $idGrupo ,  $fechaDesde){
+	public function delByPrim(){
 		try {
 			$sql = 'delete from '.self::TABLE.' where  idCiudad = ?  and  idGrupo = ?  and  fechaDesde = ? ';
 			$stmt = $this->pdo->prepare($sql);

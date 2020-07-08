@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-07 09:18:39.3149797 -0300 -03 m=+0.516793301
+----Creado----2020-07-08 18:41:45.8388742 -0300 -03 m=+1.753921101
 */
 include_once(app_path().'\model\temas_relaciones.php');
 
@@ -18,11 +18,37 @@ class Temas_relacionesController_base {
 	}
 
 	public function getByPrim( $idTema, $idTemaRel){
-		return $this->model->getByPrim( $idTema, $idTemaRel);
+
+		$this->model->idTema= $idTema;,
+		$this->model->idTemaRel= $idTemaRel;
+		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $idTema, $idTemaRel){
-		return $this->model->delByPrim( $idTema, $idTemaRel);
+
+		$this->model->idTema= $idTema;,
+		$this->model->idTemaRel= $idTemaRel;
+		return $this->model->delByPrim();
+	}
+
+
+	public function create($idTema,$idTemaRel){
+
+
+		$this->model->idTema=$idTema;
+		$this->model->idTemaRel=$idTemaRel;
+
+		return $this->model->create();
+	}
+
+
+	public function update($idTema,$idTemaRel){
+
+		$this->model->idTema=$idTema;
+		$this->model->idTemaRel=$idTemaRel;
+
+		return $this->model->update();
 	}
 }
+
 ?>

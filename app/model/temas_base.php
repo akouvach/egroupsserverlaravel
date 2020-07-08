@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-07 09:18:39.2691014 -0300 -03 m=+0.470915101
+----Creado----2020-07-08 18:41:45.6817272 -0300 -03 m=+1.596774101
 */
 include_once(app_path().'\core\crud.php');;
 
@@ -25,7 +25,9 @@ class Temas_base extends Crud {
 		$this->$name = $value;
 	}
 
-	public function create($tema,$tipo){
+	public function create(){
+
+
 		try {
 			$sql = 'insert into '.self::TABLE.' (tema,tipo) values(?,?)';
 			$stmt = $this->pdo->prepare($sql);
@@ -39,7 +41,7 @@ class Temas_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function update($id,$tema,$tipo){
+	public function update(){
 		try {
 			$sql = 'update '.self::TABLE.' set  tema = ? , tipo = ? where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -53,7 +55,7 @@ class Temas_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function getByPrim( $id){
+	public function getByPrim(){
 		try {
 			$sql = 'select * from '.self::TABLE.' where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -67,7 +69,7 @@ class Temas_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function delByPrim( $id){
+	public function delByPrim(){
 		try {
 			$sql = 'delete from '.self::TABLE.' where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);

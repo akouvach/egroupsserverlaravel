@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-07 09:18:39.2521457 -0300 -03 m=+0.453959501
+----Creado----2020-07-08 18:41:45.5841459 -0300 -03 m=+1.499192801
 */
 include_once(app_path().'\model\sec_roles_usuarios.php');
 
@@ -18,11 +18,41 @@ class Sec_roles_usuariosController_base {
 	}
 
 	public function getByPrim( $idUsuario, $idRol, $fechaDesde){
-		return $this->model->getByPrim( $idUsuario, $idRol, $fechaDesde);
+
+		$this->model->idUsuario= $idUsuario;,
+		$this->model->idRol= $idRol;,
+		$this->model->fechaDesde= $fechaDesde;
+		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $idUsuario, $idRol, $fechaDesde){
-		return $this->model->delByPrim( $idUsuario, $idRol, $fechaDesde);
+
+		$this->model->idUsuario= $idUsuario;,
+		$this->model->idRol= $idRol;,
+		$this->model->fechaDesde= $fechaDesde;
+		return $this->model->delByPrim();
+	}
+
+
+	public function create($idUsuario,$idRol,$fechaDesde){
+
+
+		$this->model->idUsuario=$idUsuario;
+		$this->model->idRol=$idRol;
+		$this->model->fechaDesde=$fechaDesde;
+
+		return $this->model->create();
+	}
+
+
+	public function update($idUsuario,$idRol,$fechaDesde){
+
+		$this->model->idUsuario=$idUsuario;
+		$this->model->idRol=$idRol;
+		$this->model->fechaDesde=$fechaDesde;
+
+		return $this->model->update();
 	}
 }
+
 ?>

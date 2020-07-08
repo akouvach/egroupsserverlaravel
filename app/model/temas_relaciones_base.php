@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-07 09:18:39.3070172 -0300 -03 m=+0.508830801
+----Creado----2020-07-08 18:41:45.8042956 -0300 -03 m=+1.719342501
 */
 include_once(app_path().'\core\crud.php');;
 
@@ -24,7 +24,9 @@ class Temas_relaciones_base extends Crud {
 		$this->$name = $value;
 	}
 
-	public function create($idTema,$idTemaRel){
+	public function create(){
+
+
 		try {
 			$sql = 'insert into '.self::TABLE.' (idTema,idTemaRel) values(?,?)';
 			$stmt = $this->pdo->prepare($sql);
@@ -38,7 +40,7 @@ class Temas_relaciones_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function update($idTema,$idTemaRel){
+	public function update(){
 		try {
 			$sql = 'update '.self::TABLE.' set where  idTema = ?  and  idTemaRel = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -52,7 +54,7 @@ class Temas_relaciones_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function getByPrim( $idTema ,  $idTemaRel){
+	public function getByPrim(){
 		try {
 			$sql = 'select * from '.self::TABLE.' where  idTema = ?  and  idTemaRel = ? ';
 			$stmt = $this->pdo->prepare($sql);
@@ -66,7 +68,7 @@ class Temas_relaciones_base extends Crud {
 			throw $ex;
 		}
 	}
-	public function delByPrim( $idTema ,  $idTemaRel){
+	public function delByPrim(){
 		try {
 			$sql = 'delete from '.self::TABLE.' where  idTema = ?  and  idTemaRel = ? ';
 			$stmt = $this->pdo->prepare($sql);
