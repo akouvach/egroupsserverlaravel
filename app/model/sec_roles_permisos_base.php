@@ -1,9 +1,9 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.4106964 -0300 -03 m=+1.325743301
+----Creado----2020-07-09 11:42:50.1460726 -0300 -03 m=+0.568756201
 */
-include_once(app_path().'\core\crud.php');;
+include_once(app_path().'\core\crud.php');
 
 class Sec_roles_permisos_base extends Crud {
 
@@ -13,8 +13,8 @@ class Sec_roles_permisos_base extends Crud {
 
 	const TABLE = 'sec_roles_permisos';
 
-	public function __construct(){
-		parent::__construct(self::TABLE);
+	public function __construct($pdo){
+		parent::__construct($pdo, self::TABLE);
 	}
 
 	public function __get($name){
@@ -60,6 +60,7 @@ class Sec_roles_permisos_base extends Crud {
 			$sql = 'select * from '.self::TABLE.' where  idRol = ?  and  idMenu = ? ';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array( $this->idRol ,  $this->idMenu));
+			$result = $stmt->fetchAll(PDO::FETCH_OBJ);
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.9622406 -0300 -03 m=+1.877287501
+----Creado----2020-07-09 11:42:50.3680465 -0300 -03 m=+0.790730101
 */
 include_once(app_path().'\model\usuarios.php');
 
-class UsuariosController_base {
+include_once(app_path().'\core\conexion.php');
+
+class UsuariosController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Usuarios();
+		try {
+			parent::__construct();
+			$this->model = new Usuarios($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

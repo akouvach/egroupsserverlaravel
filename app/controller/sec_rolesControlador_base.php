@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.3268113 -0300 -03 m=+1.241858201
+----Creado----2020-07-09 11:42:50.1032389 -0300 -03 m=+0.525922501
 */
 include_once(app_path().'\model\sec_roles.php');
 
-class Sec_rolesController_base {
+include_once(app_path().'\core\conexion.php');
+
+class Sec_rolesController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Sec_roles();
+		try {
+			parent::__construct();
+			$this->model = new Sec_roles($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

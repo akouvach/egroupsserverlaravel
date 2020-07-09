@@ -1,27 +1,28 @@
 <?php
 
-require_once "conexion.php";
+// require_once "conexion.php";
 
-abstract class Crud extends Conexion {
+abstract class Crud {
 
     private $table;
     protected $pdo;
 
-    public function __construct($table){
+    public function __construct($pdo, $table){
         $this->table = $table;
+        $this->pdo = $pdo;
         //$this->pdo = parent::conexion();
-        try {
-            $this->pdo = parent::conex();
-            if(is_null($this->pdo)){
-                throw new Exception("No se pudo conectar a la base de datos");
-            }
-        } catch (PDOException $err){
-            throw $err;
-        } catch (Error $err){
-            throw $err;
-        } catch (Exception $ex){
-            throw $ex;
-        }
+        // try {
+        //     $this->pdo = parent::conex();
+        //     if(is_null($this->pdo)){
+        //         throw new Exception("No se pudo conectar a la base de datos");
+        //     }
+        // } catch (PDOException $err){
+        //     throw $err;
+        // } catch (Error $err){
+        //     throw $err;
+        // } catch (Exception $ex){
+        //     throw $ex;
+        // }
     }
 
     public function __get($name){
@@ -31,13 +32,6 @@ abstract class Crud extends Conexion {
     public function __set($name, $value){
         $this->$name = $value;
     }
-
-    public function __destruct() {
-        //parent::__destruct();
-        // close the database connection
-        $this->pdo = null;
-    }
-
 
 
     public function getAll($filtro=[], $filtroValores=[]){

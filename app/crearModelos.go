@@ -105,6 +105,9 @@ func main() {
 
 			//Voy a crear el archivo con estos datos
 			if tablaanterior != "" {
+				fmt.Println("-------------------------------------------------------------")
+				fmt.Println("Trabajando en la tabla: " + MiTabla.nombre)
+				fmt.Println("-------------------------------------------------------------")
 
 				if MiTabla.crearModelo(dirModel) {
 					fmt.Println("Modelo Creado exitosamente")
@@ -128,7 +131,6 @@ func main() {
 				}
 			}
 			// voy a inicializar el objeto
-			fmt.Println("Cargando: " + tabla + " ...")
 			MiTabla.nombre = tabla
 			MiTabla.columnas = []Columna{}
 			tablaanterior = tabla
@@ -151,7 +153,6 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	var content strings.Builder
 
 	fileName := "./" + dirRoute + "/api_" + t.nombre + "_base.php"
-	fmt.Println("creando "+t.nombre, t.columnas)
 
 	content.WriteString("<?php\n\n")
 	content.WriteString("/*\n")
@@ -163,16 +164,71 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 
 	content.WriteString("include_once(app_path().'\\" + dirController + "\\" + t.nombre + "Controller.php');\n\n")
 
-	// GET
+	// GET ALL
 
 	content.WriteString("Route::get('" + t.nombre + "', function () {\n")
 	content.WriteString("\t$json = '';\n")
 	content.WriteString("\ttry {\n")
 	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
-	content.WriteString("\t\treturn response($" + t.nombre + "->getAll(),200);\n")
+
+	content.WriteString("\t\t$json =json_encode($" + t.nombre + "->getAll());\n")
+	content.WriteString("\t\thttp_response_code(200);\n")
 
 	content.WriteString("\t} catch (Exception $ex){\n")
-	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\thttp_response_code(500);\n")
+	content.WriteString("\t} finally {\n")
+	content.WriteString("\t\techo $json;\n")
+	content.WriteString("\t}\n")
+	content.WriteString("});\n\n\n")
+
+	// GET By Prim
+
+	content.WriteString("Route::get('" + t.nombre)
+
+	c := ""
+	for _, col := range t.columnas {
+		if col.columnkey == "PRI" {
+			c += "/{" + col.columna + "}"
+		}
+	}
+	content.WriteString(c)
+
+	content.WriteString("', function (")
+
+	c = ""
+	for _, col := range t.columnas {
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
+			}
+			c += "$" + col.columna
+		}
+	}
+	content.WriteString(c)
+
+	content.WriteString(") {\n")
+	content.WriteString("\t$json = '';\n")
+	content.WriteString("\ttry {\n")
+	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+
+	content.WriteString("\t\t$json = json_encode($" + t.nombre + "->getByPrim(")
+
+	c = ""
+	for _, col := range t.columnas {
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
+			}
+			c += "$" + col.columna
+		}
+	}
+	content.WriteString(c)
+	content.WriteString("));\n")
+	content.WriteString("\t\thttp_response_code(200);\n")
+
+	content.WriteString("\t} catch (Exception $ex){\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
 	content.WriteString("\t\thttp_response_code(500);\n")
 	content.WriteString("\t} finally {\n")
 	content.WriteString("\t\techo $json;\n")
@@ -185,20 +241,24 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("\t$json = '';\n")
 	content.WriteString("\ttry {\n")
 	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
-	content.WriteString("\t\t$res = $" + t.nombre + "->create(")
-	c := ""
+	content.WriteString("\t\t$json = $" + t.nombre + "->create(")
+
+	c = ""
 	for _, col := range t.columnas {
-		if c != "" {
-			c += ","
+		if col.extra != "auto_increment" {
+			if c != "" {
+				c += ","
+			}
+			c += "$request->" + col.columna
 		}
-		c += "$request->" + col.columna
 	}
 	content.WriteString(c)
+
 	content.WriteString(");")
-	content.WriteString("\n\t\treturn response($res,200);\n")
+	content.WriteString("\n\t\thttp_response_code(200);\n")
 
 	content.WriteString("\t} catch (Exception $ex){\n")
-	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
 	content.WriteString("\t\thttp_response_code(500);\n")
 	content.WriteString("\t} finally {\n")
 	content.WriteString("\t\techo $json;\n")
@@ -212,7 +272,7 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("\ttry {\n")
 
 	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
-	content.WriteString("\t\t$res = $" + t.nombre + "->update(")
+	content.WriteString("\t\t$json = $" + t.nombre + "->update(")
 	c = ""
 	for _, col := range t.columnas {
 		if c != "" {
@@ -223,10 +283,52 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	}
 	content.WriteString(c)
 	content.WriteString(");")
-	content.WriteString("\n\t\treturn response($res,200);\n")
+	content.WriteString("\n\t\thttp_response_code(200);\n")
 
 	content.WriteString("\t} catch (Exception $ex){\n")
-	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\thttp_response_code(500);\n")
+	content.WriteString("\t} finally {\n")
+	content.WriteString("\t\techo $json;\n")
+	content.WriteString("\t}\n")
+	content.WriteString("});\n")
+
+	// DELETE
+
+	content.WriteString("Route::delete('" + t.nombre + "', function (Request $request) {\n")
+	content.WriteString("\t$json = '';\n")
+	content.WriteString("\ttry {\n")
+
+	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+
+	content.WriteString("\t\t$json = $" + t.nombre + "->delByPrim(")
+	c = ""
+	for _, col := range t.columnas {
+		if col.columnkey == "PRI" {
+			if c != "" {
+				c += ","
+			}
+			c += "$request->" + col.columna
+		}
+	}
+	content.WriteString(c)
+	content.WriteString("); \n")
+
+	// content.WriteString("\t\t$res = $" + t.nombre + "->update(")
+	// c = ""
+	// for _, col := range t.columnas {
+	// 	if c != "" {
+	// 		c += ","
+	// 	}
+	// 	c += "$request->" + col.columna
+
+	// }
+	// content.WriteString(c)
+	// content.WriteString(");")
+	content.WriteString("\n\t\thttp_response_code(200);\n")
+
+	content.WriteString("\t} catch (Exception $ex){\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
 	content.WriteString("\t\thttp_response_code(500);\n")
 	content.WriteString("\t} finally {\n")
 	content.WriteString("\t\techo $json;\n")
@@ -247,7 +349,6 @@ func (t *Tabla) crearAPI(dirAPI string, dirController string) bool {
 	var content strings.Builder
 
 	fileName := "./" + dirAPI + "/" + t.nombre + "Api_base.php"
-	fmt.Println("creando "+t.nombre, t.columnas)
 
 	content.WriteString("<?php\n\n")
 	content.WriteString("/*\n")
@@ -332,7 +433,6 @@ func (t *Tabla) crearControlador(dirController string) bool {
 	var content strings.Builder
 
 	fileName := "./" + dirController + "/" + t.nombre + "Controlador_base.php"
-	fmt.Println("creando "+t.nombre, t.columnas)
 
 	content.WriteString("<?php\n\n")
 	content.WriteString("/*\n")
@@ -341,12 +441,26 @@ func (t *Tabla) crearControlador(dirController string) bool {
 
 	content.WriteString("include_once(app_path()." + "'\\model\\" +
 		t.nombre + ".php');\n\n")
-	content.WriteString("class " + strings.Title(t.nombre) + "Controller_base {\n\n")
+	content.WriteString("include_once(app_path()." + "'\\core\\conexion.php');\n\n")
+	content.WriteString("class " + strings.Title(t.nombre) + "Controller_base extends Conexion{\n\n")
 	content.WriteString("\tprivate $model; \n")
 
 	content.WriteString("\n\tpublic function __construct(){\n")
-	content.WriteString("\t\t$this->model = new " + strings.Title(t.nombre) + "();\n")
-	content.WriteString("\t}\n")
+	content.WriteString("\t\ttry {\n")
+	content.WriteString("\t\t\tparent::__construct();\n")
+	content.WriteString("\t\t\t$this->model = new " + strings.Title(t.nombre) + "($this->pdo);\n")
+	content.WriteString("\t\t} catch (Exception $ex){\n")
+	content.WriteString("\t\t\tthrow $ex;\n")
+	content.WriteString("\t\t}\n")
+	content.WriteString("\t}\n\n")
+
+	content.WriteString("\n\tpublic function __get($name){\n")
+	content.WriteString("\t\treturn $this->$name;\n")
+	content.WriteString("\t}\n\n")
+
+	content.WriteString("\n\tpublic function __set($name, $value){\n")
+	content.WriteString("\t\t$this->$name = $value;\n")
+	content.WriteString("\t}\n\n")
 
 	content.WriteString("\n\tpublic function getAll(){\n")
 	content.WriteString("\t\treturn $this->model->getAll();\n")
@@ -467,14 +581,13 @@ func (t *Tabla) crearModelo(dirModel string) bool {
 	var content strings.Builder
 
 	fileName := "./" + dirModel + "/" + t.nombre + "_base.php"
-	fmt.Println("creando "+t.nombre, t.columnas)
 
 	content.WriteString("<?php\n\n")
 	content.WriteString("/*\n")
 	content.WriteString("----Creado----" + time.Now().String() + "\n")
 	content.WriteString("*/\n")
 
-	content.WriteString("include_once(app_path().'\\core\\crud.php');;\n\n")
+	content.WriteString("include_once(app_path().'\\core\\crud.php');\n\n")
 
 	content.WriteString("class " + strings.Title(t.nombre) + "_base extends Crud {\n\n")
 	for _, col := range t.columnas {
@@ -483,8 +596,8 @@ func (t *Tabla) crearModelo(dirModel string) bool {
 
 	content.WriteString("\n\tconst TABLE = '" + t.nombre + "';\n")
 
-	content.WriteString("\n\tpublic function __construct(){\n")
-	content.WriteString("\t\tparent::__construct(self::TABLE);\n")
+	content.WriteString("\n\tpublic function __construct($pdo){\n")
+	content.WriteString("\t\tparent::__construct($pdo, self::TABLE);\n")
 	content.WriteString("\t}\n")
 
 	content.WriteString("\n\tpublic function __get($name){\n")
@@ -538,6 +651,18 @@ func (t *Tabla) crearModelo(dirModel string) bool {
 	}
 	content.WriteString(c)
 	content.WriteString("));\n")
+
+	// Me fijo si tiene id autogenerado
+
+	c = ""
+	for _, col := range t.columnas {
+		if col.extra == "auto_increment" {
+			c += "\t\t\t$this->" + col.columna + " = $this->pdo->lastInsertId();\n"
+
+		}
+	}
+	content.WriteString(c)
+
 	content.WriteString("\t\t\treturn $result;\n")
 	content.WriteString("\t\t} catch (PDOException $err){\n")
 	content.WriteString("\t\t\tthrow $err;\n")
@@ -637,6 +762,8 @@ func (t *Tabla) crearModelo(dirModel string) bool {
 	}
 	content.WriteString(c)
 	content.WriteString("));\n")
+
+	content.WriteString("\t\t\t$result = $stmt->fetchAll(PDO::FETCH_OBJ);\n")
 	content.WriteString("\t\t\treturn $result;\n")
 	content.WriteString("\t\t} catch (PDOException $err){\n")
 	content.WriteString("\t\t\tthrow $err;\n")

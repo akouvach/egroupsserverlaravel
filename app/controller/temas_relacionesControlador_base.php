@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.8388742 -0300 -03 m=+1.753921101
+----Creado----2020-07-09 11:42:50.3165941 -0300 -03 m=+0.739277701
 */
 include_once(app_path().'\model\temas_relaciones.php');
 
-class Temas_relacionesController_base {
+include_once(app_path().'\core\conexion.php');
+
+class Temas_relacionesController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Temas_relaciones();
+		try {
+			parent::__construct();
+			$this->model = new Temas_relaciones($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.4455931 -0300 -03 m=+1.360640001
+----Creado----2020-07-09 11:42:50.159017 -0300 -03 m=+0.581700601
 */
 include_once(app_path().'\model\sec_roles_permisos.php');
 
-class Sec_roles_permisosController_base {
+include_once(app_path().'\core\conexion.php');
+
+class Sec_roles_permisosController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Sec_roles_permisos();
+		try {
+			parent::__construct();
+			$this->model = new Sec_roles_permisos($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

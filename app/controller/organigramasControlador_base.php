@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.1937077 -0300 -03 m=+1.108754601
+----Creado----2020-07-09 11:42:50.0505509 -0300 -03 m=+0.473234501
 */
 include_once(app_path().'\model\organigramas.php');
 
-class OrganigramasController_base {
+include_once(app_path().'\core\conexion.php');
+
+class OrganigramasController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Organigramas();
+		try {
+			parent::__construct();
+			$this->model = new Organigramas($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

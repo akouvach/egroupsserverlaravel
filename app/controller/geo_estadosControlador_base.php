@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:44.4273389 -0300 -03 m=+0.342385801
+----Creado----2020-07-09 11:42:49.7348198 -0300 -03 m=+0.157503401
 */
 include_once(app_path().'\model\geo_estados.php');
 
-class Geo_estadosController_base {
+include_once(app_path().'\core\conexion.php');
+
+class Geo_estadosController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Geo_estados();
+		try {
+			parent::__construct();
+			$this->model = new Geo_estados($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

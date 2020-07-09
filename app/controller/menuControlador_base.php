@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.06841 -0300 -03 m=+0.983456901
+----Creado----2020-07-09 11:42:50.0001653 -0300 -03 m=+0.422848901
 */
 include_once(app_path().'\model\menu.php');
 
-class MenuController_base {
+include_once(app_path().'\core\conexion.php');
+
+class MenuController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Menu();
+		try {
+			parent::__construct();
+			$this->model = new Menu($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

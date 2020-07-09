@@ -1,9 +1,9 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.8042956 -0300 -03 m=+1.719342501
+----Creado----2020-07-09 11:42:50.3021986 -0300 -03 m=+0.724882201
 */
-include_once(app_path().'\core\crud.php');;
+include_once(app_path().'\core\crud.php');
 
 class Temas_relaciones_base extends Crud {
 
@@ -12,8 +12,8 @@ class Temas_relaciones_base extends Crud {
 
 	const TABLE = 'temas_relaciones';
 
-	public function __construct(){
-		parent::__construct(self::TABLE);
+	public function __construct($pdo){
+		parent::__construct($pdo, self::TABLE);
 	}
 
 	public function __get($name){
@@ -59,6 +59,7 @@ class Temas_relaciones_base extends Crud {
 			$sql = 'select * from '.self::TABLE.' where  idTema = ?  and  idTemaRel = ? ';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array( $this->idTema ,  $this->idTemaRel));
+			$result = $stmt->fetchAll(PDO::FETCH_OBJ);
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

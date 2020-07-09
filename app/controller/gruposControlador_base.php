@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:44.6665372 -0300 -03 m=+0.581584101
+----Creado----2020-07-09 11:42:49.8406688 -0300 -03 m=+0.263352401
 */
 include_once(app_path().'\model\grupos.php');
 
-class GruposController_base {
+include_once(app_path().'\core\conexion.php');
+
+class GruposController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Grupos();
+		try {
+			parent::__construct();
+			$this->model = new Grupos($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

@@ -1,9 +1,9 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:44.306187 -0300 -03 m=+0.221233901
+----Creado----2020-07-09 11:42:49.6724488 -0300 -03 m=+0.095132401
 */
-include_once(app_path().'\core\crud.php');;
+include_once(app_path().'\core\crud.php');
 
 class Geo_ciudades_base extends Crud {
 
@@ -13,8 +13,8 @@ class Geo_ciudades_base extends Crud {
 
 	const TABLE = 'geo_ciudades';
 
-	public function __construct(){
-		parent::__construct(self::TABLE);
+	public function __construct($pdo){
+		parent::__construct($pdo, self::TABLE);
 	}
 
 	public function __get($name){
@@ -32,6 +32,7 @@ class Geo_ciudades_base extends Crud {
 			$sql = 'insert into '.self::TABLE.' (idEstado,idPais) values(?,?)';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->idEstado,$this->idPais));
+			$this->id = $this->pdo->lastInsertId();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;
@@ -60,6 +61,7 @@ class Geo_ciudades_base extends Crud {
 			$sql = 'select * from '.self::TABLE.' where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array( $this->id));
+			$result = $stmt->fetchAll(PDO::FETCH_OBJ);
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

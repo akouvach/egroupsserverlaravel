@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:44.546966 -0300 -03 m=+0.462012901
+----Creado----2020-07-09 11:42:49.784662 -0300 -03 m=+0.207345601
 */
 include_once(app_path().'\model\geo_paises.php');
 
-class Geo_paisesController_base {
+include_once(app_path().'\core\conexion.php');
+
+class Geo_paisesController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Geo_paises();
+		try {
+			parent::__construct();
+			$this->model = new Geo_paises($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

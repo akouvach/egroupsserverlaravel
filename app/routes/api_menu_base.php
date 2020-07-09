@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.1190756 -0300 -03 m=+1.034122501
+----Creado----2020-07-09 11:42:50.0224661 -0300 -03 m=+0.445149701
 */
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,9 +12,25 @@ Route::get('menu', function () {
 	$json = '';
 	try {
 		$menu = new MenuController();
-		return response($menu->getAll(),200);
+		$json =json_encode($menu->getAll());
+		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["ok"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		http_response_code(500);
+	} finally {
+		echo $json;
+	}
+});
+
+
+Route::get('menu/{id}', function ($id) {
+	$json = '';
+	try {
+		$menu = new MenuController();
+		$json = json_encode($menu->getByPrim($id));
+		http_response_code(200);
+	} catch (Exception $ex){
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
 		http_response_code(500);
 	} finally {
 		echo $json;
@@ -26,10 +42,10 @@ Route::post('menu', function (Request $request) {
 	$json = '';
 	try {
 		$menu = new MenuController();
-		$res = $menu->create($request->id,$request->ruta,$request->menu,$request->menuIdPadre);
-		return response($res,200);
+		$json = $menu->create($request->ruta,$request->menu,$request->menuIdPadre);
+		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["ok"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
 		http_response_code(500);
 	} finally {
 		echo $json;
@@ -39,10 +55,24 @@ Route::put('menu', function (Request $request) {
 	$json = '';
 	try {
 		$menu = new MenuController();
-		$res = $menu->update($request->id,$request->ruta,$request->menu,$request->menuIdPadre);
-		return response($res,200);
+		$json = $menu->update($request->id,$request->ruta,$request->menu,$request->menuIdPadre);
+		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["ok"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		http_response_code(500);
+	} finally {
+		echo $json;
+	}
+});
+Route::delete('menu', function (Request $request) {
+	$json = '';
+	try {
+		$menu = new MenuController();
+		$json = $menu->delByPrim($request->id); 
+
+		http_response_code(200);
+	} catch (Exception $ex){
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
 		http_response_code(500);
 	} finally {
 		echo $json;

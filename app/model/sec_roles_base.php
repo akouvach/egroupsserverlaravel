@@ -1,9 +1,9 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.2875339 -0300 -03 m=+1.202580801
+----Creado----2020-07-09 11:42:50.0905559 -0300 -03 m=+0.513239501
 */
-include_once(app_path().'\core\crud.php');;
+include_once(app_path().'\core\crud.php');
 
 class Sec_roles_base extends Crud {
 
@@ -15,8 +15,8 @@ class Sec_roles_base extends Crud {
 
 	const TABLE = 'sec_roles';
 
-	public function __construct(){
-		parent::__construct(self::TABLE);
+	public function __construct($pdo){
+		parent::__construct($pdo, self::TABLE);
 	}
 
 	public function __get($name){
@@ -34,6 +34,7 @@ class Sec_roles_base extends Crud {
 			$sql = 'insert into '.self::TABLE.' (rol,esAdminGlogal,esAdminGrupo,esAdminGeografico) values(?,?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->rol,$this->esAdminGlogal,$this->esAdminGrupo,$this->esAdminGeografico));
+			$this->id = $this->pdo->lastInsertId();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;
@@ -62,6 +63,7 @@ class Sec_roles_base extends Crud {
 			$sql = 'select * from '.self::TABLE.' where  id = ? ';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array( $this->id));
+			$result = $stmt->fetchAll(PDO::FETCH_OBJ);
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:45.3760642 -0300 -03 m=+1.291111101
+----Creado----2020-07-09 11:42:50.1306392 -0300 -03 m=+0.553322801
 */
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -12,9 +12,25 @@ Route::get('sec_roles', function () {
 	$json = '';
 	try {
 		$sec_roles = new Sec_rolesController();
-		return response($sec_roles->getAll(),200);
+		$json =json_encode($sec_roles->getAll());
+		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["ok"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		http_response_code(500);
+	} finally {
+		echo $json;
+	}
+});
+
+
+Route::get('sec_roles/{id}', function ($id) {
+	$json = '';
+	try {
+		$sec_roles = new Sec_rolesController();
+		$json = json_encode($sec_roles->getByPrim($id));
+		http_response_code(200);
+	} catch (Exception $ex){
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
 		http_response_code(500);
 	} finally {
 		echo $json;
@@ -26,10 +42,10 @@ Route::post('sec_roles', function (Request $request) {
 	$json = '';
 	try {
 		$sec_roles = new Sec_rolesController();
-		$res = $sec_roles->create($request->id,$request->rol,$request->esAdminGlogal,$request->esAdminGrupo,$request->esAdminGeografico);
-		return response($res,200);
+		$json = $sec_roles->create($request->rol,$request->esAdminGlogal,$request->esAdminGrupo,$request->esAdminGeografico);
+		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["ok"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
 		http_response_code(500);
 	} finally {
 		echo $json;
@@ -39,10 +55,24 @@ Route::put('sec_roles', function (Request $request) {
 	$json = '';
 	try {
 		$sec_roles = new Sec_rolesController();
-		$res = $sec_roles->update($request->id,$request->rol,$request->esAdminGlogal,$request->esAdminGrupo,$request->esAdminGeografico);
-		return response($res,200);
+		$json = $sec_roles->update($request->id,$request->rol,$request->esAdminGlogal,$request->esAdminGrupo,$request->esAdminGeografico);
+		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["ok"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		http_response_code(500);
+	} finally {
+		echo $json;
+	}
+});
+Route::delete('sec_roles', function (Request $request) {
+	$json = '';
+	try {
+		$sec_roles = new Sec_rolesController();
+		$json = $sec_roles->delByPrim($request->id); 
+
+		http_response_code(200);
+	} catch (Exception $ex){
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
 		http_response_code(500);
 	} finally {
 		echo $json;

@@ -1,17 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:44.3450746 -0300 -03 m=+0.260121501
+----Creado----2020-07-09 11:42:49.6857377 -0300 -03 m=+0.108421301
 */
 include_once(app_path().'\model\geo_ciudades.php');
 
-class Geo_ciudadesController_base {
+include_once(app_path().'\core\conexion.php');
+
+class Geo_ciudadesController_base extends Conexion{
 
 	private $model; 
 
 	public function __construct(){
-		$this->model = new Geo_ciudades();
+		try {
+			parent::__construct();
+			$this->model = new Geo_ciudades($this->pdo);
+		} catch (Exception $ex){
+			throw $ex;
+		}
 	}
+
+
+	public function __get($name){
+		return $this->$name;
+	}
+
+
+	public function __set($name, $value){
+		$this->$name = $value;
+	}
+
 
 	public function getAll(){
 		return $this->model->getAll();

@@ -1,9 +1,9 @@
 <?php
 
 /*
-----Creado----2020-07-08 18:41:44.7606938 -0300 -03 m=+0.675740701
+----Creado----2020-07-09 11:42:49.8809899 -0300 -03 m=+0.303673501
 */
-include_once(app_path().'\core\crud.php');;
+include_once(app_path().'\core\crud.php');
 
 class Grupos_ciudades_base extends Crud {
 
@@ -13,8 +13,8 @@ class Grupos_ciudades_base extends Crud {
 
 	const TABLE = 'grupos_ciudades';
 
-	public function __construct(){
-		parent::__construct(self::TABLE);
+	public function __construct($pdo){
+		parent::__construct($pdo, self::TABLE);
 	}
 
 	public function __get($name){
@@ -60,6 +60,7 @@ class Grupos_ciudades_base extends Crud {
 			$sql = 'select * from '.self::TABLE.' where  idCiudad = ?  and  idGrupo = ?  and  fechaDesde = ? ';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array( $this->idCiudad ,  $this->idGrupo ,  $this->fechaDesde));
+			$result = $stmt->fetchAll(PDO::FETCH_OBJ);
 			return $result;
 		} catch (PDOException $err){
 			throw $err;
