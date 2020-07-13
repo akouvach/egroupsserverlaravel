@@ -1,9 +1,11 @@
 <?php
-require '../../vendor/autoload.php';
+
+// require '../../vendor/autoload.php';
+// var_dump(__DIR__);
 
 use Firebase\JWT\JWT;
 
-require_once "../controller/usuario_controller.php";
+include_once(app_path().'\controller\usuariosController.php');
 
 // show error reporting
 error_reporting(E_ALL);
@@ -17,8 +19,8 @@ class MiJwt
 
     // variables used for jwt
     const KEY = "tu secreto es: la suerte del principiante no puede fallar - twsagi6()";
-    const ISS = "http://localhost/api/";
-    const AUD = "http://localhost/api/";
+    const ISS = "http://localhost:8000/api/";
+    const AUD = "http://localhost:8000/api/";
     const IAT = 1356999524;
     const NBF = 1357000000;
 
@@ -27,7 +29,7 @@ class MiJwt
 
         try {
             //Abro una instancia del objeto usuario para ir a buscar sus credenciales
-            $usr = new UsuarioController();
+            $usr = new UsuariosController();
             //busco que me devuelva las credenciales el usuario y contraseña que le envío
             $result = $usr->getCredentials($data->email, $data->password);
             return $result;
@@ -39,22 +41,26 @@ class MiJwt
 
     }
 
-    public function isAuthenticated($token, $key){
+    public function isAuthenticated($token){
+        $key = "tu secreto es: la suerte del principiante no puede fallar - twsagi6()";
 
         try {
             $plano = JWT::decode($token, $key, array('HS256'));
-            return (object)["ok"=>true, "payload"=>$plano->data];        
+            return (object)["rta"=>true, "payload"=>$plano->data];        
         } catch (Error $err){        
-            return (object)["ok"=>false, "payload"=>$err->__toString()];
+            return (object)["rta"=>false, "payload"=>$err->__toString()];
         } catch (Exception $ex){
-            return (object) ["ok"=>false, "payload"=>$ex->__toString()];
+            return (object) ["rta"=>false, "payload"=>$ex->__toString()];
         }
         
     }
 
     public function encode($t, $k)
     {
-        return JWT::encode($t, $k);
+
+        $rta =JWT::encode($t, $k);
+
+        return $rta;
     }
 
 

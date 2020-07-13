@@ -1,21 +1,35 @@
 <?php
 
 /*
-----Creado----2020-07-09 11:42:49.8113264 -0300 -03 m=+0.234010001
+----Creado----2020-07-12 06:50:01.6763055 -0300 -03 m=+0.944618301
 */
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+include_once(app_path().'\core\error_core.php');
+include_once(app_path().'\core\jwt_core.php');
+include_once(app_path().'\core\security.php');
+
 include_once(app_path().'\controller\geo_paisesController.php');
 
-Route::get('geo_paises', function () {
+Route::get('geo_paises', function (Request $request) {
 	$json = '';
 	try {
+		$token = $request->header('authorization');
+		if(is_null($token)){
+			throw new Exception('No envio token de autenticacion');
+		}
+		$token = str_replace('Bearer ','',$token);
+		$rdo = verificarSeguridad($token);
+		if(!$rdo->ok){
+			throw new Exception('Token no autorizado');
+		}
 		$geo_paises = new Geo_paisesController();
+		$geo_paises->usuarioConectado=$rdo->payload;
 		$json =json_encode($geo_paises->getAll());
 		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);
 		http_response_code(500);
 	} finally {
 		echo $json;
@@ -23,14 +37,24 @@ Route::get('geo_paises', function () {
 });
 
 
-Route::get('geo_paises/{id}', function ($id) {
+Route::get('geo_paises/{id}', function (Request $request) {
 	$json = '';
 	try {
+		$token = $request->header('authorization');
+		if(is_null($token)){
+			throw new Exception('No envio token de autenticacion');
+		}
+		$token = str_replace('Bearer ','',$token);
+		$rdo = verificarSeguridad($token);
+		if(!$rdo->ok){
+			throw new Exception('Token no autorizado');
+		}
 		$geo_paises = new Geo_paisesController();
-		$json = json_encode($geo_paises->getByPrim($id));
+		$geo_paises->usuarioConectado=$rdo->payload;
+		$json = json_encode($geo_paises->getByPrim($request->id));
 		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);
 		http_response_code(500);
 	} finally {
 		echo $json;
@@ -41,11 +65,21 @@ Route::get('geo_paises/{id}', function ($id) {
 Route::post('geo_paises', function (Request $request) {
 	$json = '';
 	try {
+		$token = $request->header('authorization');
+		if(is_null($token)){
+			throw new Exception('No envio token de autenticacion');
+		}
+		$token = str_replace('Bearer ','',$token);
+		$rdo = verificarSeguridad($token);
+		if(!$rdo->ok){
+			throw new Exception('Token no autorizado');
+		}
 		$geo_paises = new Geo_paisesController();
+		$geo_paises->usuarioConectado=$rdo->payload;
 		$json = $geo_paises->create($request->id,$request->nombre,$request->descripcion,$request->iso3,$request->codigo);
 		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);
 		http_response_code(500);
 	} finally {
 		echo $json;
@@ -54,11 +88,21 @@ Route::post('geo_paises', function (Request $request) {
 Route::put('geo_paises', function (Request $request) {
 	$json = '';
 	try {
+		$token = $request->header('authorization');
+		if(is_null($token)){
+			throw new Exception('No envio token de autenticacion');
+		}
+		$token = str_replace('Bearer ','',$token);
+		$rdo = verificarSeguridad($token);
+		if(!$rdo->ok){
+			throw new Exception('Token no autorizado');
+		}
 		$geo_paises = new Geo_paisesController();
+		$geo_paises->usuarioConectado=$rdo->payload;
 		$json = $geo_paises->update($request->id,$request->nombre,$request->descripcion,$request->iso3,$request->codigo);
 		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);
 		http_response_code(500);
 	} finally {
 		echo $json;
@@ -67,12 +111,22 @@ Route::put('geo_paises', function (Request $request) {
 Route::delete('geo_paises', function (Request $request) {
 	$json = '';
 	try {
+		$token = $request->header('authorization');
+		if(is_null($token)){
+			throw new Exception('No envio token de autenticacion');
+		}
+		$token = str_replace('Bearer ','',$token);
+		$rdo = verificarSeguridad($token);
+		if(!$rdo->ok){
+			throw new Exception('Token no autorizado');
+		}
 		$geo_paises = new Geo_paisesController();
+		$geo_paises->usuarioConectado=$rdo->payload;
 		$json = $geo_paises->delByPrim($request->id); 
 
 		http_response_code(200);
 	} catch (Exception $ex){
-		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);
 		http_response_code(500);
 	} finally {
 		echo $json;

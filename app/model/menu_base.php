@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-09 11:42:49.9848521 -0300 -03 m=+0.407535701
+----Creado----2020-07-12 06:50:02.2668326 -0300 -03 m=+1.535145401
 */
 include_once(app_path().'\core\crud.php');
 
@@ -30,10 +30,9 @@ class Menu_base extends Crud {
 
 
 		try {
-			$sql = 'insert into '.self::TABLE.' (ruta,menu,menuIdPadre) values(?,?,?)';
+			$sql = 'insert into '.self::TABLE.' (id,ruta,menu,menuIdPadre) values(?,?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
-			$result = $stmt->execute(array($this->ruta,$this->menu,$this->menuIdPadre));
-			$this->id = $this->pdo->lastInsertId();
+			$result = $stmt->execute(array($this->id,$this->ruta,$this->menu,$this->menuIdPadre));
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

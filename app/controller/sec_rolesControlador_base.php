@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-09 11:42:50.1032389 -0300 -03 m=+0.525922501
+----Creado----2020-07-12 06:50:02.4318474 -0300 -03 m=+1.700160201
 */
 include_once(app_path().'\model\sec_roles.php');
 
@@ -48,9 +48,10 @@ class Sec_rolesController_base extends Conexion{
 	}
 
 
-	public function create($rol,$esAdminGlogal,$esAdminGrupo,$esAdminGeografico){
+	public function create($id,$rol,$esAdminGlogal,$esAdminGrupo,$esAdminGeografico){
 
 
+		$this->model->id=$id;
 		$this->model->rol=$rol;
 		$this->model->esAdminGlogal=$esAdminGlogal;
 		$this->model->esAdminGrupo=$esAdminGrupo;

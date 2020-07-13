@@ -25,9 +25,18 @@ use Illuminate\Support\Facades\Route;
 // });
 
 include_once(app_path() . '\routes\api_grupos_base.php');
+include_once(app_path() . '\routes\api_geo_paises_base.php');
 include_once(app_path() . '\routes\api_usuarios_base.php');
 include_once(app_path() . '\routes\api_menu_base.php');
 
+include_once(app_path() . '\routes\api_blogs_base.php');
+include_once(app_path() . '\routes\api_blogs.php');
+
+include_once(app_path() . '\routes\api_sendmail.php');
+
+
+
+include_once(app_path() . '\routes\api_login.php');
 
 
 

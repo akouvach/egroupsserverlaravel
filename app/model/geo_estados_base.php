@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-09 11:42:49.7202231 -0300 -03 m=+0.142906701
+----Creado----2020-07-12 06:50:01.5006969 -0300 -03 m=+0.769009701
 */
 include_once(app_path().'\core\crud.php');
 
@@ -29,10 +29,9 @@ class Geo_estados_base extends Crud {
 
 
 		try {
-			$sql = 'insert into '.self::TABLE.' (estado,idPais) values(?,?)';
+			$sql = 'insert into '.self::TABLE.' (id,estado,idPais) values(?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
-			$result = $stmt->execute(array($this->estado,$this->idPais));
-			$this->id = $this->pdo->lastInsertId();
+			$result = $stmt->execute(array($this->id,$this->estado,$this->idPais));
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

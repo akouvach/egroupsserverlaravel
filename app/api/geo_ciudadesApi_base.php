@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-09 11:42:49.6970619 -0300 -03 m=+0.119745501
+----Creado----2020-07-12 06:50:01.4243721 -0300 -03 m=+0.692684901
 */
 require_once '../core/error_core.php';
 require_once '../core/security.php';
@@ -31,10 +31,10 @@ try {
 	}
 	http_response_code(200);
 } catch (Error $err){
-	$json = json_encode(["ok"=>false,"payload"=>utf8_encode($err->getMessage())]);;
+	$json = json_encode(["ok"=>false,"payload"=>utf8_encode($err->getMessage())]);
 	http_response_code(500);
 } catch (Exception $ex){
-	$json = json_encode(["ok"=>false,"payload"=>utf8_encode($ex->getMessage())]);;
+	$json = json_encode(["ok"=>false,"payload"=>utf8_encode($ex->getMessage())]);
 	http_response_code(500);
 } finally {
 	echo $json;

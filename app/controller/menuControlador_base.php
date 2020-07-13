@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-09 11:42:50.0001653 -0300 -03 m=+0.422848901
+----Creado----2020-07-12 06:50:02.2820432 -0300 -03 m=+1.550356001
 */
 include_once(app_path().'\model\menu.php');
 
@@ -48,9 +48,10 @@ class MenuController_base extends Conexion{
 	}
 
 
-	public function create($ruta,$menu,$menuIdPadre){
+	public function create($id,$ruta,$menu,$menuIdPadre){
 
 
+		$this->model->id=$id;
 		$this->model->ruta=$ruta;
 		$this->model->menu=$menu;
 		$this->model->menuIdPadre=$menuIdPadre;

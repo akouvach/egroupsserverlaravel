@@ -2,7 +2,8 @@
 
 <?php
 
-include_once '../core/headers.php';
+include_once(app_path().'\core\headers.php');
+
 
 // header('Access-Control-Allow-Origin: *');
 // header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method");
@@ -12,70 +13,66 @@ include_once '../core/headers.php';
 // header("Content-Type: application/json; charset=UTF-8");
 // print_r($_SERVER);
 
-include_once '../core/jwt_core.php';
-include_once '../core/error_core.php';
+include_once(app_path().'\core\jwt_core.php');
+include_once(app_path().'\core\error_core.php');
 
-require '../../vendor/autoload.php';
+// require_once '../../vendor/autoload.php'; 
 
 use Firebase\JWT\JWT;
 
-$json = "";
+class Login {
 
-if($_SERVER['REQUEST_METHOD']=='POST') {
 
-    try {
+    public function getToken($credenciales){
+        $json="";
 
-        //Recibo los datos enviados por un fetch post con json
-        $json = file_get_contents('php://input');
-        $data = json_decode($json);
-        $mi_jwt = new MiJwt();
+        try {
 
-        //Obtengo el usuario correspondiente
-        $result = $mi_jwt->getCredentials($data);
+            $mi_jwt = new MiJwt();
 
-        //si me trae algún resultado es que encontró la combinación de usuario y contraseña
-        if (!is_null($result) && sizeof($result)>0 ){
-            $token = array(
-                "iss" => $mi_jwt::ISS,
-                "aud" => $mi_jwt::AUD,
-                "iat" => $mi_jwt::IAT,
-                "nbf" => $mi_jwt::NBF,
-                "data" => array(
-                    "id" => $result[0]->id,
-                    "nombre" => $result[0]->nombre,
-                    "apellido" => $result[0]->apellido,
-                    "email" => $result[0]->email
-                )
-            );
+            //Obtengo el usuario correspondiente
+            $result = $mi_jwt->getCredentials($credenciales);
 
-            // genero el token con los datos que me enviaron
-            $jwt = $mi_jwt->encode($token, $mi_jwt::KEY);
+    
 
-            //Seteo cabesera y devuelvo el token
-            http_response_code(200);
-            $json = json_encode(array("ok" => true,"jwt" => $jwt));
+            //si me trae algún resultado es que encontró la combinación de usuario y contraseña
+            if (!is_null($result) && sizeof($result)>0 ){
+                $token = array(
+                    "iss" => $mi_jwt::ISS,
+                    "aud" => $mi_jwt::AUD,
+                    "iat" => $mi_jwt::IAT,
+                    "nbf" => $mi_jwt::NBF,
+                    "data" => array(
+                        "id" => $result[0]->id,
+                        "nombre" => $result[0]->nombre,
+                        "apellido" => $result[0]->apellido,
+                        "email" => $result[0]->email
+                    )
+                );
 
-        } else {
-            // este usuario no tiene permisos
-            http_response_code(401);    
-            $json = json_encode(["ok"=>false,"payload"=>"El usuario no no existe o no tiene permisos"]);
+                // genero el token con los datos que me enviaron
+                $jwt = $mi_jwt->encode($token, $mi_jwt::KEY);
+                
+                $json = json_encode(array("rta" => true,"jwt" => $jwt));
+
+            } else {
+                $json = json_encode(["rta"=>false,"payload"=>"El usuario no no existe o no tiene permisos"]);
+            }
+
+        } catch (Exception $ex) {
+
+            $json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);       
+
+        } finally {
+
+            return $json;
         }
+        
 
-    } catch (Exception $ex){
-        $json = json_encode(["ok"=>false,"payload"=>utf8_encode($ex->getMessage())]);       
-        http_response_code(500);
-    } catch (Error $err){
-        $json = json_encode(["ok"=>false,"payload"=> utf8_encode($err->getMessage())]);
-        http_response_code(500);
     }
 
-} else {
 
-    $json = json_encode(["ok"=>false, "payload"=>"Sólo se permites peticiones POST"]);
-    http_response_code(501);
-    
 }
 
-echo $json;
 
 ?>

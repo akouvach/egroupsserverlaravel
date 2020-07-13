@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-09 11:42:49.6857377 -0300 -03 m=+0.108421301
+----Creado----2020-07-12 06:50:01.419242 -0300 -03 m=+0.687554801
 */
 include_once(app_path().'\model\geo_ciudades.php');
 
@@ -48,9 +48,10 @@ class Geo_ciudadesController_base extends Conexion{
 	}
 
 
-	public function create($idEstado,$idPais){
+	public function create($id,$idEstado,$idPais){
 
 
+		$this->model->id=$id;
 		$this->model->idEstado=$idEstado;
 		$this->model->idPais=$idPais;
 

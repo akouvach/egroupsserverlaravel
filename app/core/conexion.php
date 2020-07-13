@@ -15,20 +15,27 @@ class Conexion {
     protected $pdo ;
     private $contTransacciones = 0;
 
+    public $usuarioConectado = "";
+
     public function __construct(){
 
 		try {
+            // var_dump("voy a construir la conexion");
 
             if(func_num_args()>0){
                 //uso la conexion que me pasaron
                 $this->pdo = func_get_arg(0);
             } else {
+                // var_dump("voy a construir el PDO");
+
                 $pdo = new PDO("{$this->driver}:host={$this->host};port={$this->port};dbname={$this->dbName};charset={$this->charset}",$this->user,$this->pass);
-           
+                // var_dump("ya construi el pdo");
+
                 if($pdo){
                     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     $this->pdo = $pdo;
                 } else {
+                    // var_dump("error al creare la conexion");
                     throw new Exception("error en la conexion la creación de la conexión");
                 }              
             }
@@ -57,7 +64,7 @@ class Conexion {
                 }
             }
             $this->contTransacciones +=1;
-            var_dump("comienza transaccion:",$this->contTransacciones);
+            // var_dump("comienza transaccion:",$this->contTransacciones);
             return true;
     }
 
@@ -69,7 +76,7 @@ class Conexion {
             }
         }
         $this->contTransacciones -=1;
-        var_dump("confirma transaccion:",$this->contTransacciones);
+        // var_dump("confirma transaccion:",$this->contTransacciones);
         return true;
     }
 
@@ -79,7 +86,7 @@ class Conexion {
             return false;
         }
         $this->contTransacciones =0;
-        var_dump("va para atras transaccion:",$this->contTransacciones);
+        // var_dump("va para atras transaccion:",$this->contTransacciones);
         return true;
         
     }

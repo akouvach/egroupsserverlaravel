@@ -38,6 +38,7 @@ abstract class Crud {
 
         try {
 
+            //var_dump($filtro, $filtroValores);
             $select = "select * from $this->table";
 
             $filtrosArray = [];
@@ -46,6 +47,7 @@ abstract class Crud {
                 //Cada filtro lo debo agregar a el select
                 $select = $select . " where ";
                 foreach ($filtro as $key=>$valor) {
+                    // var_dump($key,$valor);
                     if($key>0){
                         //agrego el AND para concatenar las condiciones
                         $select = $select . " and ";
@@ -64,6 +66,7 @@ abstract class Crud {
                     $select = $select . ")";
                 }
             }
+            // var_dump("voy a ejecutar el select");
 
             $stmt = $this->pdo->prepare($select);
             if(sizeof($filtro)>0 ){

@@ -2,7 +2,7 @@
 
 require_once "usuarios_base.php";
 
-class Usuarios extends Usuarios_base {
+class Usuarios extends Usuarios_base { 
 
     public function getCredentials($email, $password){
         try {

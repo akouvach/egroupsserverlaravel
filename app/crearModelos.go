@@ -162,20 +162,35 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("use Illuminate\\Http\\Request;\n")
 	content.WriteString("use Illuminate\\Support\\Facades\\Route;\n\n")
 
+	content.WriteString("include_once(app_path().'\\core\\error_core.php');\n")
+	content.WriteString("include_once(app_path().'\\core\\jwt_core.php');\n")
+	content.WriteString("include_once(app_path().'\\core\\security.php');\n\n")
+
 	content.WriteString("include_once(app_path().'\\" + dirController + "\\" + t.nombre + "Controller.php');\n\n")
 
 	// GET ALL
 
-	content.WriteString("Route::get('" + t.nombre + "', function () {\n")
+	content.WriteString("Route::get('" + t.nombre + "', function (Request $request) {\n")
 	content.WriteString("\t$json = '';\n")
 	content.WriteString("\ttry {\n")
-	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
 
+	content.WriteString("\t\t$token = $request->header('authorization');\n")
+	content.WriteString("\t\tif(is_null($token)){\n")
+	content.WriteString("\t\t\tthrow new Exception('No envio token de autenticacion');\n")
+	content.WriteString("\t\t}\n")
+	content.WriteString("\t\t$token = str_replace('Bearer ','',$token);\n")
+	content.WriteString("\t\t$rdo = verificarSeguridad($token);\n")
+	content.WriteString("\t\tif(!$rdo->ok){\n")
+	content.WriteString("\t\t\tthrow new Exception('Token no autorizado');\n")
+	content.WriteString("\t\t}\n")
+
+	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+	content.WriteString("\t\t$" + t.nombre + "->usuarioConectado=$rdo->payload;\n")
 	content.WriteString("\t\t$json =json_encode($" + t.nombre + "->getAll());\n")
 	content.WriteString("\t\thttp_response_code(200);\n")
 
 	content.WriteString("\t} catch (Exception $ex){\n")
-	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);\n")
 	content.WriteString("\t\thttp_response_code(500);\n")
 	content.WriteString("\t} finally {\n")
 	content.WriteString("\t\techo $json;\n")
@@ -194,23 +209,23 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	}
 	content.WriteString(c)
 
-	content.WriteString("', function (")
-
-	c = ""
-	for _, col := range t.columnas {
-		if col.columnkey == "PRI" {
-			if c != "" {
-				c += ","
-			}
-			c += "$" + col.columna
-		}
-	}
-	content.WriteString(c)
-
-	content.WriteString(") {\n")
+	content.WriteString("', function (Request $request) {\n")
 	content.WriteString("\t$json = '';\n")
 	content.WriteString("\ttry {\n")
+
+	content.WriteString("\t\t$token = $request->header('authorization');\n")
+	content.WriteString("\t\tif(is_null($token)){\n")
+	content.WriteString("\t\t\tthrow new Exception('No envio token de autenticacion');\n")
+	content.WriteString("\t\t}\n")
+	content.WriteString("\t\t$token = str_replace('Bearer ','',$token);\n")
+	content.WriteString("\t\t$rdo = verificarSeguridad($token);\n")
+	content.WriteString("\t\tif(!$rdo->ok){\n")
+	content.WriteString("\t\t\tthrow new Exception('Token no autorizado');\n")
+	content.WriteString("\t\t}\n")
+	// content.WriteString("\t\t$" + t.nombre + "->usuarioConectado=$rdo->payload;\n")
+
 	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+	content.WriteString("\t\t$" + t.nombre + "->usuarioConectado=$rdo->payload;\n")
 
 	content.WriteString("\t\t$json = json_encode($" + t.nombre + "->getByPrim(")
 
@@ -220,7 +235,7 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 			if c != "" {
 				c += ","
 			}
-			c += "$" + col.columna
+			c += "$request->" + col.columna
 		}
 	}
 	content.WriteString(c)
@@ -228,7 +243,7 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("\t\thttp_response_code(200);\n")
 
 	content.WriteString("\t} catch (Exception $ex){\n")
-	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);\n")
 	content.WriteString("\t\thttp_response_code(500);\n")
 	content.WriteString("\t} finally {\n")
 	content.WriteString("\t\techo $json;\n")
@@ -240,7 +255,20 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("Route::post('" + t.nombre + "', function (Request $request) {\n")
 	content.WriteString("\t$json = '';\n")
 	content.WriteString("\ttry {\n")
+
+	content.WriteString("\t\t$token = $request->header('authorization');\n")
+	content.WriteString("\t\tif(is_null($token)){\n")
+	content.WriteString("\t\t\tthrow new Exception('No envio token de autenticacion');\n")
+	content.WriteString("\t\t}\n")
+	content.WriteString("\t\t$token = str_replace('Bearer ','',$token);\n")
+	content.WriteString("\t\t$rdo = verificarSeguridad($token);\n")
+	content.WriteString("\t\tif(!$rdo->ok){\n")
+	content.WriteString("\t\t\tthrow new Exception('Token no autorizado');\n")
+	content.WriteString("\t\t}\n")
+	// content.WriteString("\t\t$" + t.nombre + "->usuarioConectado=$rdo->payload;\n")
+
 	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+	content.WriteString("\t\t$" + t.nombre + "->usuarioConectado=$rdo->payload;\n")
 	content.WriteString("\t\t$json = $" + t.nombre + "->create(")
 
 	c = ""
@@ -258,7 +286,7 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("\n\t\thttp_response_code(200);\n")
 
 	content.WriteString("\t} catch (Exception $ex){\n")
-	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);\n")
 	content.WriteString("\t\thttp_response_code(500);\n")
 	content.WriteString("\t} finally {\n")
 	content.WriteString("\t\techo $json;\n")
@@ -271,7 +299,19 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("\t$json = '';\n")
 	content.WriteString("\ttry {\n")
 
+	content.WriteString("\t\t$token = $request->header('authorization');\n")
+	content.WriteString("\t\tif(is_null($token)){\n")
+	content.WriteString("\t\t\tthrow new Exception('No envio token de autenticacion');\n")
+	content.WriteString("\t\t}\n")
+	content.WriteString("\t\t$token = str_replace('Bearer ','',$token);\n")
+	content.WriteString("\t\t$rdo = verificarSeguridad($token);\n")
+	content.WriteString("\t\tif(!$rdo->ok){\n")
+	content.WriteString("\t\t\tthrow new Exception('Token no autorizado');\n")
+	content.WriteString("\t\t}\n")
+	// content.WriteString("\t\t$" + t.nombre + "->usuarioConectado=$rdo->payload;\n")
+
 	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+	content.WriteString("\t\t$" + t.nombre + "->usuarioConectado=$rdo->payload;\n")
 	content.WriteString("\t\t$json = $" + t.nombre + "->update(")
 	c = ""
 	for _, col := range t.columnas {
@@ -286,7 +326,7 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("\n\t\thttp_response_code(200);\n")
 
 	content.WriteString("\t} catch (Exception $ex){\n")
-	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);\n")
 	content.WriteString("\t\thttp_response_code(500);\n")
 	content.WriteString("\t} finally {\n")
 	content.WriteString("\t\techo $json;\n")
@@ -299,7 +339,18 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("\t$json = '';\n")
 	content.WriteString("\ttry {\n")
 
+	content.WriteString("\t\t$token = $request->header('authorization');\n")
+	content.WriteString("\t\tif(is_null($token)){\n")
+	content.WriteString("\t\t\tthrow new Exception('No envio token de autenticacion');\n")
+	content.WriteString("\t\t}\n")
+	content.WriteString("\t\t$token = str_replace('Bearer ','',$token);\n")
+	content.WriteString("\t\t$rdo = verificarSeguridad($token);\n")
+	content.WriteString("\t\tif(!$rdo->ok){\n")
+	content.WriteString("\t\t\tthrow new Exception('Token no autorizado');\n")
+	content.WriteString("\t\t}\n")
+
 	content.WriteString("\t\t$" + t.nombre + " = new " + strings.Title(t.nombre) + "Controller();\n")
+	content.WriteString("\t\t$" + t.nombre + "->usuarioConectado=$rdo->payload;\n")
 
 	content.WriteString("\t\t$json = $" + t.nombre + "->delByPrim(")
 	c = ""
@@ -328,7 +379,7 @@ func (t *Tabla) crearRutas(dirRoute string, dirController string) bool {
 	content.WriteString("\n\t\thttp_response_code(200);\n")
 
 	content.WriteString("\t} catch (Exception $ex){\n")
-	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t\t$json = json_encode([" + strconv.Quote("rta") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);\n")
 	content.WriteString("\t\thttp_response_code(500);\n")
 	content.WriteString("\t} finally {\n")
 	content.WriteString("\t\techo $json;\n")
@@ -411,10 +462,10 @@ func (t *Tabla) crearAPI(dirAPI string, dirController string) bool {
 	content.WriteString("\thttp_response_code(200);\n")
 
 	content.WriteString("} catch (Error $err){\n")
-	content.WriteString("\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($err->getMessage())]);;\n")
+	content.WriteString("\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($err->getMessage())]);\n")
 	content.WriteString("\thttp_response_code(500);\n")
 	content.WriteString("} catch (Exception $ex){\n")
-	content.WriteString("\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);;\n")
+	content.WriteString("\t$json = json_encode([" + strconv.Quote("ok") + "=>false," + strconv.Quote("payload") + "=>utf8_encode($ex->getMessage())]);\n")
 	content.WriteString("\thttp_response_code(500);\n")
 	content.WriteString("} finally {\n")
 	content.WriteString("\techo $json;\n")
