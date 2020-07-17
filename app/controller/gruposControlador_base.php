@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:01.7599671 -0300 -03 m=+1.028279901
+----Creado----2020-07-16 16:15:02.6642684 -0300 -03 m=+1.093475401
 */
 include_once(app_path().'\model\grupos.php');
 
@@ -12,16 +12,11 @@ class GruposController_base extends Conexion{
 	private $model; 
 
 	public function __construct(){
-		// var_dump("voy a construir controller_base");
-
 		try {
 			parent::__construct();
-			// var_dump("ya construi la conexion");
-
-
 			$this->model = new Grupos($this->pdo);
 		} catch (Exception $ex){
-			throw new Exception ("No se pudo crear el modelo".$ex->getMessage());
+			throw $ex;
 		}
 	}
 

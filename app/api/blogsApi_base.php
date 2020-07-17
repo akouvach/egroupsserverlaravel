@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:01.1742081 -0300 -03 m=+0.442520901
+----Creado----2020-07-16 16:15:01.9894578 -0300 -03 m=+0.418664801
 */
 require_once '../core/error_core.php';
 require_once '../core/security.php';

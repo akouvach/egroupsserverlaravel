@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.7353175 -0300 -03 m=+2.003630301
+----Creado----2020-07-16 16:15:03.9077002 -0300 -03 m=+2.336907201
 */
 include_once(app_path().'\core\crud.php');
 
@@ -33,6 +33,7 @@ class Temas_base extends Crud {
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->tema,$this->tipo));
 			$this->id = $this->pdo->lastInsertId();
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

@@ -22,10 +22,10 @@ class Conexion {
 		try {
             // var_dump("voy a construir la conexion");
 
-            if(func_num_args()>0){
-                //uso la conexion que me pasaron
-                $this->pdo = func_get_arg(0);
-            } else {
+            // if(func_num_args()>0){
+            //     //uso la conexion que me pasaron
+            //     $this->pdo = func_get_arg(0);
+            // } else {
                 // var_dump("voy a construir el PDO");
 
                 $pdo = new PDO("{$this->driver}:host={$this->host};port={$this->port};dbname={$this->dbName};charset={$this->charset}",$this->user,$this->pass);
@@ -33,12 +33,14 @@ class Conexion {
 
                 if($pdo){
                     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    // $pdo->setAttribute(PDO::ATTR_AUTOCOMMIT,0);
+                    
                     $this->pdo = $pdo;
                 } else {
                     // var_dump("error al creare la conexion");
                     throw new Exception("error en la conexion la creación de la conexión");
                 }              
-            }
+            // }
 			
             
         } catch (PDOException $err){
@@ -57,9 +59,10 @@ class Conexion {
     }
 
     public function beginTrans(){
+        return true;
 
             if($this->contTransacciones == 0){
-                if(!$this->pdo->beginTransaction()){
+                if(!$this->pdo->beginTransaction()){                    
                     return false;
                 }
             }
@@ -69,6 +72,7 @@ class Conexion {
     }
 
     public function commitTrans(){
+        return true;
 
         if($this->contTransacciones == 1){
             if(!$this->pdo->commit()){
@@ -81,6 +85,7 @@ class Conexion {
     }
 
     public function rollbackTrans(){
+        return true;
 
         if(!$this->pdo->rollBack()){
             return false;

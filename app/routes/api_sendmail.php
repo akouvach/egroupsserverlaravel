@@ -47,7 +47,7 @@ Route::post('sendmail', function (Request $request) {
         // var_dump("variablde de entorno", getenv('SENDGRID_API_KEY'));
         
         // var_dump($request->to,$request->subject,$request->mensaje);
-        $sendgrid = new \SendGrid('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');
+        $sendgrid = new \SendGrid('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');
         try {
             $response = $sendgrid->send($email);
             // print $response->statusCode() . "\n";

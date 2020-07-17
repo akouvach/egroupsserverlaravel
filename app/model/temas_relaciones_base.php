@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.8763029 -0300 -03 m=+2.144615701
+----Creado----2020-07-16 16:15:04.0516244 -0300 -03 m=+2.480831401
 */
 include_once(app_path().'\core\crud.php');
 
@@ -31,6 +31,7 @@ class Temas_relaciones_base extends Crud {
 			$sql = 'insert into '.self::TABLE.' (idTema,idTemaRel) values(?,?)';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->idTema,$this->idTemaRel));
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

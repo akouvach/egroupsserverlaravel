@@ -22,7 +22,7 @@ use Firebase\JWT\JWT;
 
 class Login {
 
-
+ 
     public function getToken($credenciales){
         $json="";
 
@@ -32,7 +32,7 @@ class Login {
 
             //Obtengo el usuario correspondiente
             $result = $mi_jwt->getCredentials($credenciales);
-
+// var_dump($result);
     
 
             //si me trae algún resultado es que encontró la combinación de usuario y contraseña
@@ -53,7 +53,7 @@ class Login {
                 // genero el token con los datos que me enviaron
                 $jwt = $mi_jwt->encode($token, $mi_jwt::KEY);
                 
-                $json = json_encode(array("rta" => true,"jwt" => $jwt));
+                $json = json_encode(array("rta" => true,"jwt" => $jwt, "payload"=>$result[0]));
 
             } else {
                 $json = json_encode(["rta"=>false,"payload"=>"El usuario no no existe o no tiene permisos"]);

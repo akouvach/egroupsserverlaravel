@@ -24,9 +24,15 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+include_once(app_path() . '\routes\api_grupos.php');
 include_once(app_path() . '\routes\api_grupos_base.php');
+
 include_once(app_path() . '\routes\api_geo_paises_base.php');
+
+include_once(app_path() . '\routes\api_usuarios.php');
 include_once(app_path() . '\routes\api_usuarios_base.php');
+
+
 include_once(app_path() . '\routes\api_menu_base.php');
 
 include_once(app_path() . '\routes\api_blogs_base.php');
@@ -35,6 +41,8 @@ include_once(app_path() . '\routes\api_blogs.php');
 include_once(app_path() . '\routes\api_sendmail.php');
 
 
+
+include_once(app_path() . '\routes\api_buscar.php');
 
 include_once(app_path() . '\routes\api_login.php');
 

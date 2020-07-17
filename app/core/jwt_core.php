@@ -32,6 +32,7 @@ class MiJwt
             $usr = new UsuariosController();
             //busco que me devuelva las credenciales el usuario y contraseña que le envío
             $result = $usr->getCredentials($data->email, $data->password);
+            // var_dump($result);
             return $result;
         } catch (Error $err){
             throw $err;

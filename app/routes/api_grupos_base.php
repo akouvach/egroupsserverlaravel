@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:01.8230201 -0300 -03 m=+1.091332901
+----Creado----2020-07-16 16:15:02.7152199 -0300 -03 m=+1.144426901
 */
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -24,10 +24,8 @@ Route::get('grupos', function (Request $request) {
 		if(!$rdo->ok){
 			throw new Exception('Token no autorizado');
 		}
-		// var_dump("voy a generar el controlador");
 		$grupos = new GruposController();
 		$grupos->usuarioConectado=$rdo->payload;
-		// var_dump("ya genere el controlador");
 		$json =json_encode($grupos->getAll());
 		http_response_code(200);
 	} catch (Exception $ex){

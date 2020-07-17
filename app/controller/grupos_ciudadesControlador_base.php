@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.0628793 -0300 -03 m=+1.331192101
+----Creado----2020-07-16 16:15:02.9373952 -0300 -03 m=+1.366602201
 */
 include_once(app_path().'\model\grupos_ciudades.php');
 
@@ -37,16 +37,16 @@ class Grupos_ciudadesController_base extends Conexion{
 
 	public function getByPrim( $idCiudad, $idGrupo, $fechaDesde){
 
-		$this->model->idCiudad= $idCiudad;,
-		$this->model->idGrupo= $idGrupo;,
+		$this->model->idCiudad= $idCiudad;
+		$this->model->idGrupo= $idGrupo;
 		$this->model->fechaDesde= $fechaDesde;
 		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $idCiudad, $idGrupo, $fechaDesde){
 
-		$this->model->idCiudad= $idCiudad;,
-		$this->model->idGrupo= $idGrupo;,
+		$this->model->idCiudad= $idCiudad;
+		$this->model->idGrupo= $idGrupo;
 		$this->model->fechaDesde= $fechaDesde;
 		return $this->model->delByPrim();
 	}

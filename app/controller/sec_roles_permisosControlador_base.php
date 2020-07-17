@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.5109887 -0300 -03 m=+1.779301501
+----Creado----2020-07-16 16:15:03.648875 -0300 -03 m=+2.078082001
 */
 include_once(app_path().'\model\sec_roles_permisos.php');
 
@@ -37,14 +37,14 @@ class Sec_roles_permisosController_base extends Conexion{
 
 	public function getByPrim( $idRol, $idMenu){
 
-		$this->model->idRol= $idRol;,
+		$this->model->idRol= $idRol;
 		$this->model->idMenu= $idMenu;
 		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $idRol, $idMenu){
 
-		$this->model->idRol= $idRol;,
+		$this->model->idRol= $idRol;
 		$this->model->idMenu= $idMenu;
 		return $this->model->delByPrim();
 	}

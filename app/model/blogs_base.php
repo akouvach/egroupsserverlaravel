@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:01.1062109 -0300 -03 m=+0.374523701
+----Creado----2020-07-16 16:15:01.9209668 -0300 -03 m=+0.350173801
 */
 include_once(app_path().'\core\crud.php');
 
@@ -37,6 +37,7 @@ class Blogs_base extends Crud {
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->mensaje,$this->idUsuario,$this->fecha,$this->idGrupo,$this->emociones,$this->idMensajeRel));
 			$this->id = $this->pdo->lastInsertId();
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

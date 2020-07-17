@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:03.2012811 -0300 -03 m=+2.469593901
+----Creado----2020-07-16 16:15:04.9695418 -0300 -03 m=+3.398748801
 */
 include_once(app_path().'\model\wf_estados_cambios_causas.php');
 
@@ -37,16 +37,16 @@ class Wf_estados_cambios_causasController_base extends Conexion{
 
 	public function getByPrim( $idEstadoOrigen, $idEstadoDestino, $idCausa){
 
-		$this->model->idEstadoOrigen= $idEstadoOrigen;,
-		$this->model->idEstadoDestino= $idEstadoDestino;,
+		$this->model->idEstadoOrigen= $idEstadoOrigen;
+		$this->model->idEstadoDestino= $idEstadoDestino;
 		$this->model->idCausa= $idCausa;
 		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $idEstadoOrigen, $idEstadoDestino, $idCausa){
 
-		$this->model->idEstadoOrigen= $idEstadoOrigen;,
-		$this->model->idEstadoDestino= $idEstadoDestino;,
+		$this->model->idEstadoOrigen= $idEstadoOrigen;
+		$this->model->idEstadoDestino= $idEstadoDestino;
 		$this->model->idCausa= $idCausa;
 		return $this->model->delByPrim();
 	}

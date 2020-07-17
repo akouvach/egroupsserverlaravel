@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:03.0510662 -0300 -03 m=+2.319379001
+----Creado----2020-07-16 16:15:04.6431667 -0300 -03 m=+3.072373701
 */
 include_once(app_path().'\core\crud.php');
 
@@ -32,6 +32,7 @@ class Wf_base extends Crud {
 			$sql = 'insert into '.self::TABLE.' (id,workflow,idApp) values(?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->id,$this->workflow,$this->idApp));
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

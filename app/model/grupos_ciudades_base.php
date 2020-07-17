@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.0266361 -0300 -03 m=+1.294948901
+----Creado----2020-07-16 16:15:02.9052736 -0300 -03 m=+1.334480601
 */
 include_once(app_path().'\core\crud.php');
 
@@ -32,6 +32,7 @@ class Grupos_ciudades_base extends Crud {
 			$sql = 'insert into '.self::TABLE.' (idCiudad,idGrupo,fechaDesde) values(?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->idCiudad,$this->idGrupo,$this->fechaDesde));
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

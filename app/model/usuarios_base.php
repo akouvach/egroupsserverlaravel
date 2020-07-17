@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.9256673 -0300 -03 m=+2.193980101
+----Creado----2020-07-16 16:15:04.1993792 -0300 -03 m=+2.628586201
 */
 include_once(app_path().'\core\crud.php');
 
@@ -38,6 +38,7 @@ class Usuarios_base extends Crud {
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->nombre,$this->apellido,$this->email,$this->usuario,$this->genero,$this->fecha_nac,$this->pass));
 			$this->id = $this->pdo->lastInsertId();
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

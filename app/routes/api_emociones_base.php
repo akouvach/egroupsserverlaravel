@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:01.336889 -0300 -03 m=+0.605201801
+----Creado----2020-07-16 16:15:02.1562259 -0300 -03 m=+0.585432901
 */
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -76,7 +76,7 @@ Route::post('emociones', function (Request $request) {
 		}
 		$emociones = new EmocionesController();
 		$emociones->usuarioConectado=$rdo->payload;
-		$json = $emociones->create($request->id,$request->emocion);
+		$json = $emociones->create($request->id,$request->emocion,$request->emoji);
 		http_response_code(200);
 	} catch (Exception $ex){
 		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);
@@ -99,7 +99,7 @@ Route::put('emociones', function (Request $request) {
 		}
 		$emociones = new EmocionesController();
 		$emociones->usuarioConectado=$rdo->payload;
-		$json = $emociones->update($request->id,$request->emocion);
+		$json = $emociones->update($request->id,$request->emocion,$request->emoji);
 		http_response_code(200);
 	} catch (Exception $ex){
 		$json = json_encode(["rta"=>false,"payload"=>utf8_encode($ex->getMessage())]);

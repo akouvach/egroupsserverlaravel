@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:01.9111457 -0300 -03 m=+1.179458501
+----Creado----2020-07-16 16:15:02.7983632 -0300 -03 m=+1.227570201
 */
 include_once(app_path().'\model\grupos_apps.php');
 
@@ -37,14 +37,14 @@ class Grupos_appsController_base extends Conexion{
 
 	public function getByPrim( $idGrupo, $idApp){
 
-		$this->model->idGrupo= $idGrupo;,
+		$this->model->idGrupo= $idGrupo;
 		$this->model->idApp= $idApp;
 		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $idGrupo, $idApp){
 
-		$this->model->idGrupo= $idGrupo;,
+		$this->model->idGrupo= $idGrupo;
 		$this->model->idApp= $idApp;
 		return $this->model->delByPrim();
 	}

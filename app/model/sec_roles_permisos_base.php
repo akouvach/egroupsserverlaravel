@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.4937869 -0300 -03 m=+1.762099701
+----Creado----2020-07-16 16:15:03.6077872 -0300 -03 m=+2.036994201
 */
 include_once(app_path().'\core\crud.php');
 
@@ -32,6 +32,7 @@ class Sec_roles_permisos_base extends Crud {
 			$sql = 'insert into '.self::TABLE.' (idRol,idMenu,fechaDesde) values(?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->idRol,$this->idMenu,$this->fechaDesde));
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

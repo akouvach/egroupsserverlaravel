@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.1922888 -0300 -03 m=+1.460601601
+----Creado----2020-07-16 16:15:03.0709368 -0300 -03 m=+1.500143801
 */
 include_once(app_path().'\model\grupos_relaciones.php');
 
@@ -37,14 +37,14 @@ class Grupos_relacionesController_base extends Conexion{
 
 	public function getByPrim( $grupo_origen, $grupo_destino){
 
-		$this->model->grupo_origen= $grupo_origen;,
+		$this->model->grupo_origen= $grupo_origen;
 		$this->model->grupo_destino= $grupo_destino;
 		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $grupo_origen, $grupo_destino){
 
-		$this->model->grupo_origen= $grupo_origen;,
+		$this->model->grupo_origen= $grupo_origen;
 		$this->model->grupo_destino= $grupo_destino;
 		return $this->model->delByPrim();
 	}

@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:03.1851329 -0300 -03 m=+2.453445701
+----Creado----2020-07-16 16:15:04.9289871 -0300 -03 m=+3.358194101
 */
 include_once(app_path().'\core\crud.php');
 
@@ -32,6 +32,7 @@ class Wf_estados_cambios_causas_base extends Crud {
 			$sql = 'insert into '.self::TABLE.' (idEstadoOrigen,idEstadoDestino,idCausa) values(?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->idEstadoOrigen,$this->idEstadoDestino,$this->idCausa));
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

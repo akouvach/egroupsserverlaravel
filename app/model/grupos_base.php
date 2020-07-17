@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:01.7222666 -0300 -03 m=+0.990579401
+----Creado----2020-07-16 16:15:02.6279999 -0300 -03 m=+1.057206901
 */
 include_once(app_path().'\core\crud.php');
 
@@ -37,6 +37,7 @@ class Grupos_base extends Crud {
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->descripcion,$this->grupo,$this->idCreador,$this->idOrganigrama,$this->tipo,$this->tags));
 			$this->id = $this->pdo->lastInsertId();
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

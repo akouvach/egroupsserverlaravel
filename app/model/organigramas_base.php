@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.3418654 -0300 -03 m=+1.610178201
+----Creado----2020-07-16 16:15:03.3151433 -0300 -03 m=+1.744350301
 */
 include_once(app_path().'\core\crud.php');
 
@@ -33,6 +33,7 @@ class Organigramas_base extends Crud {
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->area,$this->idAreaPadre));
 			$this->id = $this->pdo->lastInsertId();
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

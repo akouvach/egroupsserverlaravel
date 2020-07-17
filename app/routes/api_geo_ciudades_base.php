@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:01.4489755 -0300 -03 m=+0.717288301
+----Creado----2020-07-16 16:15:02.2936847 -0300 -03 m=+0.722891701
 */
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

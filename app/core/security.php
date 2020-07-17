@@ -9,6 +9,7 @@ function verificarSeguridad($authToken){
     try {
         $miJwt = new MiJwt();
         $auth = $miJwt->isAuthenticated($authToken);
+        // var_dump($auth);
         if($auth->rta){
             //Tengo  código correctos.  Devuelvo los códigos de usuario               
             $json = (object)["ok"=>true,"errorcode"=>200,"payload"=>$auth->payload];

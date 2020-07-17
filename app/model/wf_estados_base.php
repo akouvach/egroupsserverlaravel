@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:03.1336723 -0300 -03 m=+2.401985101
+----Creado----2020-07-16 16:15:04.7859309 -0300 -03 m=+3.215137901
 */
 include_once(app_path().'\core\crud.php');
 
@@ -34,6 +34,7 @@ class Wf_estados_base extends Crud {
 			$sql = 'insert into '.self::TABLE.' (id,estado,idApp,esInicial,esFinal) values(?,?,?,?,?)';
 			$stmt = $this->pdo->prepare($sql);
 			$result = $stmt->execute(array($this->id,$this->estado,$this->idApp,$this->esInicial,$this->esFinal));
+			$stmt->closeCursor();
 			return $result;
 		} catch (PDOException $err){
 			throw $err;

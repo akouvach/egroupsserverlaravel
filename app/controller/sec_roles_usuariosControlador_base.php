@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:02.6131766 -0300 -03 m=+1.881489401
+----Creado----2020-07-16 16:15:03.8011233 -0300 -03 m=+2.230330301
 */
 include_once(app_path().'\model\sec_roles_usuarios.php');
 
@@ -37,16 +37,16 @@ class Sec_roles_usuariosController_base extends Conexion{
 
 	public function getByPrim( $idUsuario, $idRol, $fechaDesde){
 
-		$this->model->idUsuario= $idUsuario;,
-		$this->model->idRol= $idRol;,
+		$this->model->idUsuario= $idUsuario;
+		$this->model->idRol= $idRol;
 		$this->model->fechaDesde= $fechaDesde;
 		return $this->model->getByPrim();
 	}
 
 	public function delByPrim( $idUsuario, $idRol, $fechaDesde){
 
-		$this->model->idUsuario= $idUsuario;,
-		$this->model->idRol= $idRol;,
+		$this->model->idUsuario= $idUsuario;
+		$this->model->idRol= $idRol;
 		$this->model->fechaDesde= $fechaDesde;
 		return $this->model->delByPrim();
 	}

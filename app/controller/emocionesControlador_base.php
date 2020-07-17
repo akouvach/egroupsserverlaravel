@@ -1,7 +1,7 @@
 <?php
 
 /*
-----Creado----2020-07-12 06:50:01.2834639 -0300 -03 m=+0.551776701
+----Creado----2020-07-16 16:15:02.0958758 -0300 -03 m=+0.525082801
 */
 include_once(app_path().'\model\emociones.php');
 
@@ -48,20 +48,22 @@ class EmocionesController_base extends Conexion{
 	}
 
 
-	public function create($id,$emocion){
+	public function create($id,$emocion,$emoji){
 
 
 		$this->model->id=$id;
 		$this->model->emocion=$emocion;
+		$this->model->emoji=$emoji;
 
 		return $this->model->create();
 	}
 
 
-	public function update($id,$emocion){
+	public function update($id,$emocion,$emoji){
 
 		$this->model->id=$id;
 		$this->model->emocion=$emocion;
+		$this->model->emoji=$emoji;
 
 		return $this->model->update();
 	}

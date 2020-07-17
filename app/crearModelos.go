@@ -532,9 +532,9 @@ func (t *Tabla) crearControlador(dirController string) bool {
 	c = ""
 	for _, col := range t.columnas {
 		if col.columnkey == "PRI" {
-			if c != "" {
-				c += ","
-			}
+			// if c != "" {
+			// 	c += ","
+			// }
 			c += "\n\t\t$this->model->" + col.columna + "= $" + col.columna + ";"
 		}
 	}
@@ -558,9 +558,9 @@ func (t *Tabla) crearControlador(dirController string) bool {
 	c = ""
 	for _, col := range t.columnas {
 		if col.columnkey == "PRI" {
-			if c != "" {
-				c += ","
-			}
+			// if c != "" {
+			// 	c += ","
+			// }
 			c += "\n\t\t$this->model->" + col.columna + "= $" + col.columna + ";"
 		}
 	}
@@ -714,6 +714,7 @@ func (t *Tabla) crearModelo(dirModel string) bool {
 	}
 	content.WriteString(c)
 
+	content.WriteString("\t\t\t$stmt->closeCursor();\n")
 	content.WriteString("\t\t\treturn $result;\n")
 	content.WriteString("\t\t} catch (PDOException $err){\n")
 	content.WriteString("\t\t\tthrow $err;\n")
